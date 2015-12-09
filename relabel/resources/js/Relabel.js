@@ -53,11 +53,11 @@
 
 			switch(type)
 			{
-				case 'assets':     break;
-				case 'categories': selector = 'input[name="groupId"]'; break;
-				case 'globals':    selector = 'input[name="setId"]'; break;
-				case 'entries':    selector = 'input[name="entryTypeId"], #' + namespace + 'entryType'; break;
-				case 'tags':       break;
+				case this.ASSET:    break;
+				case this.CATEGORY: selector = 'input[name="groupId"]'; break;
+				case this.GLOBAL:   selector = 'input[name="setId"]'; break;
+				case this.ENTRY:    selector = 'input[name="entryTypeId"], #' + namespace + 'entryType'; break;
+				case this.TAG:      break;
 			}
 
 			var $input = $form.find(selector);
