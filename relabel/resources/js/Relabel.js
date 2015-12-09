@@ -15,44 +15,7 @@
 		TAG:            'tag',
 		TAG_GROUP:      'tagGroup',
 
-		// TODO Get context should also pick out the ID's
 		getContext: function(element)
-		{
-			return element ?
-				this.getContextFromForm(element) :
-				this.getContextFromPath();
-		},
-
-		getContextFromPath: function()
-		{
-			var path = Craft.path.split('/');
-
-			if(path[0] === 'settings')
-			{
-				switch(path[1])
-				{
-					case 'assets':     return this.ASSET_SOURCE;
-					case 'categories': return this.CATEGORY_GROUP;
-					case 'globals':    return this.GLOBAL_SET;
-					case 'sections':   return this.ENTRY_TYPE;
-					case 'tags':       return this.TAG_GROUP;
-				}
-			}
-			else
-			{
-				switch(path[0])
-				{
-					case 'assets':     return this.ASSET;
-					case 'categories': return this.CATEGORY;
-					case 'globals':    return this.GLOBAL;
-					case 'entries':    return this.ENTRY;
-				}
-			}
-
-			return false;
-		},
-
-		getContextFromForm: function(element)
 		{
 			var $form = $(element);
 			var $action = $form.find('input[name="action"]');
@@ -67,12 +30,38 @@
 					case 'assets':     return this.ASSET;
 					case 'categories': return this.CATEGORY;
 					case 'globals':    return this.GLOBAL;
+					case 'sections':   return this.ENTRY; // Cover editing FLD for entry types
 					case 'entries':    return this.ENTRY;
 					case 'tags':       return this.TAG;
 				}
 			}
 
 			return false;
+		},
+
+		getContextId: function(element)
+		{
+			var $form = $(element);
+			var type = this.getContext($form);
+			var selector;
+
+			// TODO Element modal forms are tricky for assets, categories and tags... need to find a way of detecting the field layout types
+			var $namespace = $form.find('input[name="namespace"]');
+			var namespace = $namespace.val();
+			namespace = namespace ? namespace : '';
+
+			switch(type)
+			{
+				case 'assets':     break;
+				case 'categories': selector = 'input[name="groupId"]'; break;
+				case 'globals':    selector = 'input[name="setId"]'; break;
+				case 'entries':    selector = 'input[name="entryTypeId"], #' + namespace + 'entryType'; break;
+				case 'tags':       break;
+			}
+
+			var $input = $form.find(selector);
+
+			return $input.length ? ($input.val() | 0) : false;
 		},
 
 		getFieldInfo: function(id)
