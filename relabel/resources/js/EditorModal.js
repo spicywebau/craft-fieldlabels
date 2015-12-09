@@ -6,6 +6,9 @@
 		{
 			this.base();
 
+			namePl     = typeof namePl     === 'string' ? namePl     : '';
+			instructPl = typeof instructPl === 'string' ? instructPl : '';
+
 			this.$form = $('<form class="modal fitted"/>').appendTo(Garnish.$bod);
 			this.setContainer(this.$form);
 
