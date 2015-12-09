@@ -23,16 +23,17 @@
 
 			if(action)
 			{
-				action = action.split('/');
-
-				switch(action[0])
+				switch(action)
 				{
-					case 'assets':     return this.ASSET;
-					case 'categories': return this.CATEGORY;
-					case 'globals':    return this.GLOBAL;
-					case 'sections':   return this.ENTRY; // Cover editing FLD for entry types
-					case 'entries':    return this.ENTRY;
-					case 'tags':       return this.TAG;
+					// TODO Element modal forms are tricky, need a way of detecting this for them
+					case 'assetSources/saveSource': return this.ASSET_SOURCE;
+					case 'categories/saveCategory': return this.CATEGORY;
+					case 'categories/saveGroup':    return this.CATEGORY_GROUP;
+					case 'globals/saveContent':     return this.GLOBAL;
+					case 'globals/saveSet':         return this.GLOBAL_SET;
+					case 'sections/saveEntryType':  return this.ENTRY_TYPE;
+					case 'entries/saveEntry':       return this.ENTRY;
+					case 'tags/saveTagGroup':       return this.TAG_GROUP;
 				}
 			}
 
@@ -45,7 +46,7 @@
 			var type = this.getContext($form);
 			var selector;
 
-			// TODO Element modal forms are tricky for assets, categories and tags... need to find a way of detecting the field layout types
+			// TODO Element modal forms are tricky for assets, categories and tags, need to find a way of detecting the field layout types
 			var $namespace = $form.find('input[name="namespace"]');
 			var namespace = $namespace.val();
 			namespace = namespace ? namespace : '';
