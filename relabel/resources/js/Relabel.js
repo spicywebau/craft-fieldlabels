@@ -31,8 +31,8 @@
 					case 'categories/saveGroup':    return this.CATEGORY_GROUP;
 					case 'globals/saveContent':     return this.GLOBAL;
 					case 'globals/saveSet':         return this.GLOBAL_SET;
-					case 'sections/saveEntryType':  return this.ENTRY_TYPE;
 					case 'entries/saveEntry':       return this.ENTRY;
+					case 'sections/saveEntryType':  return this.ENTRY_TYPE;
 					case 'tags/saveTagGroup':       return this.TAG_GROUP;
 				}
 			}
