@@ -14,6 +14,8 @@
 		ENTRY_TYPE:     'entryType',
 		TAG:            'tag',
 		TAG_GROUP:      'tagGroup',
+		USER:           'user',
+		USER_FIELDS:    'userFields',
 
 		// This field will be populated in the RelabelPlugin.php file
 		fields: {},
@@ -37,6 +39,8 @@
 					case 'entries/saveEntry':       return this.ENTRY;
 					case 'sections/saveEntryType':  return this.ENTRY_TYPE;
 					case 'tags/saveTagGroup':       return this.TAG_GROUP;
+					case 'users/users/saveUser':    return this.USER;
+					case 'users/saveFieldLayout':   return this.USER_FIELDS;
 				}
 			}
 
