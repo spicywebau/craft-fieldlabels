@@ -15,6 +15,9 @@
 		TAG:            'tag',
 		TAG_GROUP:      'tagGroup',
 
+		// This field will be populated in the RelabelPlugin.php file
+		fields: {},
+
 		getContext: function(element)
 		{
 			var $form = $(element);
@@ -67,8 +70,7 @@
 
 		getFieldInfo: function(id)
 		{
-			// TODO Preload field information using a controller
-			return {name: 'Body', instructions: 'This is the body content of the website.'};
+			return this.fields[id];
 		}
 	});
 

@@ -65,6 +65,20 @@ class RelabelPlugin extends BasePlugin
 			craft()->templates->includeJsResource('relabel/js/Editor.js');
 			craft()->templates->includeJsResource('relabel/js/EditorModal.js');
 			craft()->templates->includeJsResource('relabel/js/main.js');
+
+			$fields = craft()->fields->getAllFields();
+			$output = array();
+
+			foreach($fields as $field)
+			{
+				$output[$field->id] = array(
+					'id' => $field->id,
+					'name' => $field->name,
+					'instructions' => $field->instructions
+				);
+			}
+
+			craft()->templates->includeJs('window.Relabel.fields=' . json_encode($output));
 		}
 	}
 }
