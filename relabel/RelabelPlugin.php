@@ -57,7 +57,7 @@ class RelabelPlugin extends BasePlugin
 
 	protected function includeResources()
 	{
-		if(!craft()->request->isAjaxRequest() && craft()->userSession->isAdmin())
+		if(craft()->request->isCpRequest() && !craft()->request->isAjaxRequest() && craft()->userSession->isAdmin())
 		{
 			craft()->templates->includeCssResource('relabel/css/main.css');
 
