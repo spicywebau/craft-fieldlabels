@@ -53,4 +53,15 @@
 		}
 	};
 
+/*
+	var EE = Craft.ElementEditor;
+	var EE_init = EE.prototype.init;
+
+	EE.prototype.init = function()
+	{
+		EE_init.apply(this, arguments);
+
+		console.log(this);
+	};
+*/
 })(jQuery);

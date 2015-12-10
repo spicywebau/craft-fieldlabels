@@ -17,12 +17,14 @@
 		USER:           'user',
 		USER_FIELDS:    'userFields',
 
-		// This field will be populated in the RelabelPlugin.php file
-		fields: {},
+		// These objects will be populated in the RelabelPlugin.php file
+		fields:  {},
+		labels:  {},
+		layouts: {},
 
 		getContext: function(element)
 		{
-			var $form = $(element);
+			var $form = element ? $(element) : Craft.cp.$primaryForm;
 			var $action = $form.find('input[name="action"]');
 			var action = $action.val();
 
@@ -49,7 +51,7 @@
 
 		getContextId: function(element)
 		{
-			var $form = $(element);
+			var $form = element ? $(element) : Craft.cp.$primaryForm;
 			var type = this.getContext($form);
 			var selector;
 
@@ -60,11 +62,16 @@
 
 			switch(type)
 			{
-				case this.ASSET:    break;
-				case this.CATEGORY: selector = 'input[name="groupId"]'; break;
-				case this.GLOBAL:   selector = 'input[name="setId"]'; break;
-				case this.ENTRY:    selector = 'input[name="entryTypeId"], #' + namespace + 'entryType'; break;
-				case this.TAG:      break;
+				case this.ASSET:
+				case this.ASSET_SOURCE: break;
+				case this.CATEGORY:
+				case this.CATEGORY_GROUP: selector = 'input[name="groupId"]'; break;
+				case this.GLOBAL:
+				case this.GLOBAL_SET: selector = 'input[name="setId"]'; break;
+				case this.ENTRY:
+				case this.ENTRY_TYPE: selector = 'input[name="entryTypeId"], #' + namespace + 'entryType'; break;
+				case this.TAG:
+				case this.TAG_GROUP: break;
 			}
 
 			var $input = $form.find(selector);
@@ -72,9 +79,44 @@
 			return $input.length ? ($input.val() | 0) : false;
 		},
 
+		getFieldLayoutId: function(element)
+		{
+			var context = this.getContext(element);
+			var contextId = this.getContextId(element);
+
+			if(contextId)
+			{
+				if(context === this.USER_FIELDS)
+				{
+					return this.layouts[context] | 0;
+				}
+				else
+				{
+					return this.layouts[context][contextId] | 0;
+				}
+			}
+
+			return false;
+		},
+
 		getFieldInfo: function(id)
 		{
 			return this.fields[id];
+		},
+
+		getLabelId: function(fieldId, fieldLayoutId)
+		{
+			for(var id in this.labels) if(this.labels.hasOwnProperty(id))
+			{
+				var label = this.labels[id];
+
+				if(label.field == fieldId && label.fieldLayout == fieldLayoutId)
+				{
+					return id | 0;
+				}
+			}
+
+			return false;
 		}
 	});
 

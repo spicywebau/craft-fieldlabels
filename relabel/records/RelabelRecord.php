@@ -18,4 +18,12 @@ class RelabelRecord extends BaseRecord
 			'fieldLayout' => array(static::BELONGS_TO, 'FieldLayoutRecord', 'onDelete' => static::CASCADE),
 		);
 	}
+
+	protected function defineAttributes()
+	{
+		return array(
+			'name'         => AttributeType::String,
+			'instructions' => AttributeType::String,
+		);
+	}
 }

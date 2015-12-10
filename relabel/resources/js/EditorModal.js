@@ -2,14 +2,23 @@
 {
 	var EditorModal = Garnish.Modal.extend({
 
-		init: function(namePl, instructPl)
+		fieldId:       null,
+		fieldLayoutId: null,
+		origName:      null,
+		origInstruct:  null,
+
+		init: function(field)
 		{
 			this.base();
 
-			namePl     = typeof namePl     === 'string' ? namePl     : '';
-			instructPl = typeof instructPl === 'string' ? instructPl : '';
+			this.fieldId = field;
+			this.fieldLayoutId = Relabel.getFieldLayoutId();
 
-			this.$form = $('<form class="modal fitted"/>').appendTo(Garnish.$bod);
+			var info = Relabel.getFieldInfo(field);
+			this.origName     = typeof info.name         === 'string' ? info.name         : '';
+			this.origInstruct = typeof info.instructions === 'string' ? info.instructions : '';
+
+			this.$form = $('<form class="modal fitted">').appendTo(Garnish.$bod);
 			this.setContainer(this.$form);
 
 			var body = $([
@@ -48,8 +57,8 @@
 			this.$cancelBtn = body.find('#relabel-cancel-button');
 			this.$saveBtn = body.find('#relabel-save-button');
 
-			this.$nameField.prop('placeholder', namePl);
-			this.$instructField.prop('placeholder', instructPl);
+			this.$nameField.prop('placeholder', this.origName);
+			this.$instructField.prop('placeholder', this.origInstruct);
 
 			this.addListener(this.$cancelBtn, 'click', 'hide');
 			this.addListener(this.$form, 'submit', 'onFormSubmit');
@@ -65,11 +74,8 @@
 				return;
 			}
 
-			var name = Craft.trim(this.$instructField.val());
-			var instruct = Craft.trim(this.$instructField.val());
-
+			this.saveLabel();
 			this.hide();
-			this.onSubmit(name, instruct);
 		},
 
 		onFadeOut: function()
@@ -97,12 +103,63 @@
 
 			if(!Garnish.isMobileBrowser())
 			{
-				setTimeout($.proxy(function() {
+				setTimeout($.proxy(function()
+				{
 					this.$nameField.focus()
 				}, this), 100);
 			}
 
 			this.base();
+		},
+
+		saveLabel: function()
+		{
+			var data = {
+				fieldId:       this.fieldId,
+				fieldLayoutId: Relabel.getFieldLayoutId(),
+				name:          this.$instructField.val(),
+				instructions:  this.$instructField.val()
+			};
+
+			var id = Relabel.getLabelId(data.field, data.fieldLayout);
+
+			if(id !== false)
+			{
+				data.id = id;
+			}
+
+			console.log(data);
+
+			Craft.postActionRequest('relabel/saveLabel', data, $.proxy(function(response, textStatus)
+			{
+				// this.$saveSpinner.addClass('hidden');
+
+				var statusSuccess = (textStatus === 'success');
+
+				if(statusSuccess && response.success)
+				{
+					console.log(response.label);
+					this.hide();
+				}
+				else if(statusSuccess && response.errors)
+				{
+					if(this.visible)
+					{
+						var errs = response.errors;
+
+						for(var attr in errs) if(errs.hasOwnProperty(attr))
+						{
+							this.displayErrors(attr, errs[attr]);
+						}
+
+						Garnish.shake(this.$container);
+					}
+				}
+				else
+				{
+					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+				}
+			}, this));
 		},
 
 		displayErrors: function(attr, errors)
