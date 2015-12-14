@@ -80,8 +80,8 @@ class RelabelPlugin extends BasePlugin
 
 		foreach($fields as $field)
 		{
-			$output[$field->id] = array(
-				'id' => $field->id,
+			$output[(int) $field->id] = array(
+				'id' => (int) $field->id,
 				'name' => $field->name,
 				'instructions' => $field->instructions
 			);
@@ -98,9 +98,9 @@ class RelabelPlugin extends BasePlugin
 		foreach($labels as $label)
 		{
 			$output[$label->id] = array(
-				'id' => $label->id,
-				'fieldId' => $label->fieldId,
-				'fieldLayoutId' => $label->fieldLayoutId,
+				'id' => (int) $label->id,
+				'fieldId' => (int) $label->fieldId,
+				'fieldLayoutId' => (int) $label->fieldLayoutId,
 				'name' => $label->name,
 				'instructions' => $label->instructions
 			);
@@ -134,7 +134,7 @@ class RelabelPlugin extends BasePlugin
 
 		foreach($list as $item)
 		{
-			$output[$item->id] = $item->fieldLayoutId;
+			$output[(int) $item->id] = (int) $item->fieldLayoutId;
 		}
 
 		return $output;
