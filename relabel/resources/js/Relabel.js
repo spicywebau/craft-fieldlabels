@@ -111,13 +111,18 @@
 
 		getLabelId: function(fieldId, fieldLayoutId)
 		{
+			return this.getLabel(fieldId, fieldLayoutId).id;
+		},
+
+		getLabel: function(fieldId, fieldLayoutId)
+		{
 			for(var id in this.labels) if(this.labels.hasOwnProperty(id))
 			{
 				var label = this.labels[id];
 
-				if(label.field == fieldId && label.fieldLayout == fieldLayoutId)
+				if(label.fieldId == fieldId && label.fieldLayoutId == fieldLayoutId)
 				{
-					return id | 0;
+					return label;
 				}
 			}
 

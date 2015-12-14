@@ -105,7 +105,7 @@
 
 		show: function(errors)
 		{
-			var label = Relabel.labels[this.fieldId];
+			var label = Relabel.getLabel(this.fieldId, this.fieldLayoutId);
 
 			if(label)
 			{
