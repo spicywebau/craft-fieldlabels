@@ -124,6 +124,25 @@
 			return false;
 		},
 
+		getLabelsOnFieldLayout: function(fieldLayoutId)
+		{
+			fieldLayoutId = isNaN(fieldLayoutId) ? this.getFieldLayoutId() : fieldLayoutId;
+
+			var labels = {};
+
+			for(var labelId in this.labels) if(this.labels.hasOwnProperty(labelId))
+			{
+				var label = this.labels[labelId];
+
+				if(label.fieldLayoutId == fieldLayoutId)
+				{
+					labels[labelId] = label;
+				}
+			}
+
+			return labels;
+		},
+
 		saveLabel: function(fieldId, fieldLayoutId, name, instruct)
 		{
 			var data = {
