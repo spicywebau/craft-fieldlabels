@@ -130,7 +130,10 @@
 				data.id = id;
 			}
 
-			console.log(data);
+			this.trigger('beforeSaveLabel', {
+				target: this,
+				label: data
+			});
 
 			Craft.postActionRequest('relabel/saveLabel', data, $.proxy(function(response, textStatus)
 			{
@@ -142,6 +145,11 @@
 				{
 					var label = response.label;
 					Relabel.labels[label.id] = label;
+
+					this.trigger('saveLabel', {
+						target: this,
+						label: label
+					});
 
 					this.hide();
 				}
@@ -158,10 +166,18 @@
 
 						Garnish.shake(this.$container);
 					}
+
+					this.trigger('errorSaveLabel', {
+						target: this
+					});
 				}
 				else
 				{
 					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+
+					this.trigger('errorSaveLabel', {
+						target: this
+					});
 				}
 			}, this));
 		},
