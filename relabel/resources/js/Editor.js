@@ -22,66 +22,74 @@
 
 		openModal: function(e)
 		{
-			var modal = new Editor.Modal(e.id);
+			var modal = new Editor.Modal(this, e.id);
 
 			modal.show();
 		},
 
-		saveLabel: function(field, fieldLayout, name, instruct)
+		saveLabel: function(fieldId, fieldLayoutId, name, instruct)
 		{
 			var data = {
-				field: field,
-				fieldLayout: fieldLayout,
+				fieldId: fieldId,
+				fieldLayoutId: fieldLayoutId,
 				name: name,
 				instructions: instruct
 			};
 
+			var id = Relabel.getLabelId(data.fieldId, data.fieldLayoutId);
+
+			if(id !== false)
+			{
+				data.id = id;
+			}
+
+			this.trigger('beforeSaveLabel', {
+				target: this,
+				label: data
+			});
+
 			Craft.postActionRequest('relabel/saveLabel', data, $.proxy(function(response, textStatus)
 			{
-				this.$saveSpinner.addClass('hidden');
-
 				var statusSuccess = (textStatus === 'success');
 
 				if(statusSuccess && response.success)
 				{
-					this.initListeners();
+					var label = response.label;
+					Relabel.labels[label.id] = label;
 
-					this.trigger('newField', {
+					this.trigger('saveLabel', {
 						target: this,
-						field: response.field
+						label: label,
+						errors: false
 					});
-
-					Craft.cp.displayNotice(Craft.t('New field created'));
-
-					this.hide();
 				}
-				else if(statusSuccess && response.template)
+				else if(statusSuccess && response.errors)
 				{
 					if(this.visible)
 					{
-						var callback = $.proxy(function(e)
+						var errs = response.errors;
+
+						for(var attr in errs) if(errs.hasOwnProperty(attr))
 						{
-							this.initListeners();
-							this.destroySettings();
-							this.initSettings(e);
-							this.off('parseTemplate', callback);
-						}, this);
-
-						this.on('parseTemplate', callback);
-						this.parseTemplate(response.template);
-
-						Garnish.shake(this.$container);
+							this.displayErrors(attr, errs[attr]);
+						}
 					}
-					else
-					{
-						this.initListeners();
-					}
+
+					this.trigger('saveLabel', {
+						target: this,
+						label: false,
+						errors: response.errors
+					});
 				}
 				else
 				{
-					this.initListeners();
-
 					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+
+					this.trigger('saveLabel', {
+						target: this,
+						label: false,
+						errors: false
+					});
 				}
 			}, this));
 		}

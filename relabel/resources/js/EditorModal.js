@@ -2,14 +2,20 @@
 {
 	var EditorModal = Garnish.Modal.extend({
 
+		editor:        null,
+
 		fieldId:       null,
 		fieldLayoutId: null,
 		origName:      null,
 		origInstruct:  null,
 
-		init: function(field)
+		init: function(editor, field)
 		{
 			this.base();
+
+			this.editor = editor;
+			this._proxyOnSaveLabel = $.proxy(this.onSaveLabel, this);
+			this.editor.on('saveLabel', this._proxyOnSaveLabel);
 
 			this.fieldId = field;
 			this.fieldLayoutId = Relabel.getFieldLayoutId();
@@ -89,6 +95,7 @@
 		{
 			this.base();
 
+			this.editor.off('onSaveLabel', this._proxyOnSaveLabel);
 			this.$container.remove();
 			this.$shade.remove();
 		},
@@ -116,70 +123,31 @@
 
 		saveLabel: function()
 		{
-			var data = {
-				fieldId:       this.fieldId,
-				fieldLayoutId: Relabel.getFieldLayoutId(),
-				name:          this.$nameField.val(),
-				instructions:  this.$instructField.val()
-			};
+			this.editor.saveLabel(
+				this.fieldId,
+				Relabel.getFieldLayoutId(),
+				this.$nameField.val(),
+				this.$instructField.val()
+			);
+		},
 
-			var id = Relabel.getLabelId(data.fieldId, data.fieldLayoutId);
-
-			if(id !== false)
+		onSaveLabel: function(e)
+		{
+			if(e.label && !e.errors)
 			{
-				data.id = id;
+				this.hide();
 			}
-
-			this.trigger('beforeSaveLabel', {
-				target: this,
-				label: data
-			});
-
-			Craft.postActionRequest('relabel/saveLabel', data, $.proxy(function(response, textStatus)
+			else if(e.errors)
 			{
-				// this.$saveSpinner.addClass('hidden');
-
-				var statusSuccess = (textStatus === 'success');
-
-				if(statusSuccess && response.success)
+				if(this.visible)
 				{
-					var label = response.label;
-					Relabel.labels[label.id] = label;
-
-					this.trigger('saveLabel', {
-						target: this,
-						label: label
-					});
-
-					this.hide();
+					Garnish.shake(this.$container);
 				}
-				else if(statusSuccess && response.errors)
-				{
-					if(this.visible)
-					{
-						var errs = response.errors;
+			}
+			else
+			{
 
-						for(var attr in errs) if(errs.hasOwnProperty(attr))
-						{
-							this.displayErrors(attr, errs[attr]);
-						}
-
-						Garnish.shake(this.$container);
-					}
-
-					this.trigger('errorSaveLabel', {
-						target: this
-					});
-				}
-				else
-				{
-					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
-
-					this.trigger('errorSaveLabel', {
-						target: this
-					});
-				}
-			}, this));
+			}
 		},
 
 		displayErrors: function(attr, errors)
