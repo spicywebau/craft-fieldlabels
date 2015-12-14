@@ -121,7 +121,7 @@
 				instructions:  this.$instructField.val()
 			};
 
-			var id = Relabel.getLabelId(data.field, data.fieldLayout);
+			var id = Relabel.getLabelId(data.fieldId, data.fieldLayoutId);
 
 			if(id !== false)
 			{
