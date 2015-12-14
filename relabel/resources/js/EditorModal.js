@@ -18,8 +18,8 @@
 			this.fieldLayoutId = Relabel.getFieldLayoutId();
 
 			var info = Relabel.getFieldInfo(field);
-			this.origName     = typeof info.name         === 'string' ? info.name         : '';
-			this.origInstruct = typeof info.instructions === 'string' ? info.instructions : '';
+			this.origName     = info && typeof info.name         === 'string' ? info.name         : '';
+			this.origInstruct = info && typeof info.instructions === 'string' ? info.instructions : '';
 
 			this.$form = $('<form class="modal fitted">').appendTo(Garnish.$bod);
 			this.setContainer(this.$form);
@@ -107,8 +107,11 @@
 		{
 			var label = Relabel.labels[this.fieldId];
 
-			this.$nameField.val(label.name);
-			this.$instructField.val(label.instructions);
+			if(label)
+			{
+				this.$nameField.val(label.name);
+				this.$instructField.val(label.instructions);
+			}
 
 			this.displayErrors('name', (errors ? errors.name : null));
 			this.displayErrors('instruct', (errors ? errors.instructions : null));
