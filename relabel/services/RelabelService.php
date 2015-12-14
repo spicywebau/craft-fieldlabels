@@ -21,16 +21,36 @@ class RelabelService extends BaseApplicationComponent
 
 	public function saveLabel(RelabelModel $label)
 	{
-		$isExisting = is_int($label->id);
-		$record = new RelabelRecord();
+		$isExisting = false;
+		$record = null;
 
-		if($isExisting)
+		if(is_int($label->id))
 		{
 			$record = RelabelRecord::model()->findById($label->id);
 
-			if(!$record)
+			if($record)
+			{
+				$isExisting = true;
+			}
+			else
 			{
 				throw new Exception(Craft::t('No label exists with the ID “{id}”.', array('id' => $label->id)));
+			}
+		}
+		else
+		{
+			$record = RelabelRecord::model()->findByAttributes(array(
+				'fieldId' => $label->fieldId,
+				'fieldLayoutId' => $label->fieldLayoutId,
+			));
+
+			if($record)
+			{
+				$isExisting = true;
+			}
+			else
+			{
+				$record = new RelabelRecord();
 			}
 		}
 
@@ -74,11 +94,7 @@ class RelabelService extends BaseApplicationComponent
 				try
 				{
 					$record->save(false);
-
-					if(!$isExisting)
-					{
-						$label->id = $record->id;
-					}
+					$label->id = $record->id;
 
 					if($transaction)
 					{
