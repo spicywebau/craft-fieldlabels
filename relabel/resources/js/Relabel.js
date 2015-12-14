@@ -2,8 +2,6 @@
 {
 	var Relabel = Garnish.Base.extend({
 
-	},
-	{
 		ASSET:          'asset',
 		ASSET_SOURCE:   'assetSource',
 		CATEGORY:       'category',
@@ -18,9 +16,16 @@
 		USER_FIELDS:    'userFields',
 
 		// These objects will be populated in the RelabelPlugin.php file
-		fields:  {},
-		labels:  {},
-		layouts: {},
+		fields:  null,
+		labels:  null,
+		layouts: null,
+
+		init: function()
+		{
+			this.fields  = {};
+			this.labels  = {};
+			this.layouts = {};
+		},
 
 		getContext: function(element)
 		{
@@ -117,9 +122,72 @@
 			}
 
 			return false;
+		},
+
+		saveLabel: function(fieldId, fieldLayoutId, name, instruct)
+		{
+			var data = {
+				fieldId: fieldId,
+				fieldLayoutId: fieldLayoutId,
+				name: name,
+				instructions: instruct
+			};
+
+			var id = this.getLabelId(data.fieldId, data.fieldLayoutId);
+
+			if(id !== false)
+			{
+				data.id = id;
+			}
+
+			this.trigger('beforeSaveLabel', {
+				label: data
+			});
+
+			Craft.postActionRequest('relabel/saveLabel', data, $.proxy(function(response, textStatus)
+			{
+				var statusSuccess = (textStatus === 'success');
+
+				if(statusSuccess && response.success)
+				{
+					var label = response.label;
+					this.labels[label.id] = label;
+
+					this.trigger('saveLabel', {
+						label: label,
+						errors: false
+					});
+				}
+				else if(statusSuccess && response.errors)
+				{
+					if(this.visible)
+					{
+						var errs = response.errors;
+
+						for(var attr in errs) if(errs.hasOwnProperty(attr))
+						{
+							this.displayErrors(attr, errs[attr]);
+						}
+					}
+
+					this.trigger('saveLabel', {
+						label: false,
+						errors: response.errors
+					});
+				}
+				else
+				{
+					Craft.cp.displayError(Craft.t('An unknown error occurred.'));
+
+					this.trigger('saveLabel', {
+						label: false,
+						errors: false
+					});
+				}
+			}, this));
 		}
 	});
 
-	window.Relabel = Relabel;
+	window.Relabel = new Relabel();
 
 })(jQuery);

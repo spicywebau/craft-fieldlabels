@@ -2,20 +2,17 @@
 {
 	var EditorModal = Garnish.Modal.extend({
 
-		editor:        null,
-
 		fieldId:       null,
 		fieldLayoutId: null,
 		origName:      null,
 		origInstruct:  null,
 
-		init: function(editor, field)
+		init: function(field)
 		{
 			this.base();
 
-			this.editor = editor;
 			this._proxyOnSaveLabel = $.proxy(this.onSaveLabel, this);
-			this.editor.on('saveLabel', this._proxyOnSaveLabel);
+			Relabel.on('saveLabel', this._proxyOnSaveLabel);
 
 			this.fieldId = field;
 			this.fieldLayoutId = Relabel.getFieldLayoutId();
@@ -95,7 +92,7 @@
 		{
 			this.base();
 
-			this.editor.off('onSaveLabel', this._proxyOnSaveLabel);
+			Relabel.off('onSaveLabel', this._proxyOnSaveLabel);
 			this.$container.remove();
 			this.$shade.remove();
 		},
@@ -123,7 +120,7 @@
 
 		saveLabel: function()
 		{
-			this.editor.saveLabel(
+			Relabel.saveLabel(
 				this.fieldId,
 				Relabel.getFieldLayoutId(),
 				this.$nameField.val(),
