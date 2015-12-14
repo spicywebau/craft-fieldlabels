@@ -77,7 +77,13 @@
 				return;
 			}
 
-			this.saveLabel();
+			Relabel.saveLabel(
+				this.fieldId,
+				Relabel.getFieldLayoutId(),
+				this.$nameField.val(),
+				this.$instructField.val()
+			);
+
 			this.hide();
 		},
 
@@ -116,16 +122,6 @@
 			}
 
 			this.base();
-		},
-
-		saveLabel: function()
-		{
-			Relabel.saveLabel(
-				this.fieldId,
-				Relabel.getFieldLayoutId(),
-				this.$nameField.val(),
-				this.$instructField.val()
-			);
 		},
 
 		onSaveLabel: function(e)
