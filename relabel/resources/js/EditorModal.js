@@ -93,10 +93,12 @@
 			this.$shade.remove();
 		},
 
-		show: function(name, instruct, errors)
+		show: function(errors)
 		{
-			this.$nameField.val(typeof name == 'string' ? name : '');
-			this.$instructField.val(typeof instruct == 'string' ? instruct : '');
+			var label = Relabel.labels[this.fieldId];
+
+			this.$nameField.val(label.name);
+			this.$instructField.val(label.instructions);
 
 			this.displayErrors('name', (errors ? errors.name : null));
 			this.displayErrors('instruct', (errors ? errors.instructions : null));
@@ -117,7 +119,7 @@
 			var data = {
 				fieldId:       this.fieldId,
 				fieldLayoutId: Relabel.getFieldLayoutId(),
-				name:          this.$instructField.val(),
+				name:          this.$nameField.val(),
 				instructions:  this.$instructField.val()
 			};
 
@@ -138,7 +140,9 @@
 
 				if(statusSuccess && response.success)
 				{
-					console.log(response.label);
+					var label = response.label;
+					Relabel.labels[label.id] = label;
+
 					this.hide();
 				}
 				else if(statusSuccess && response.errors)
