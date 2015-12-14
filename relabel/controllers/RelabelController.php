@@ -26,6 +26,7 @@ class RelabelController extends BaseController
 			'success' => $success,
 			'errors'  => $label->getAllErrors(),
 			'label'   => array(
+				'id'            => (int) $label->id,
 				'fieldId'       => (int) $label->fieldId,
 				'fieldLayoutId' => (int) $label->fieldLayoutId,
 				'name'          => $label->name,
