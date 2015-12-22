@@ -16,7 +16,18 @@ class RelabelService extends BaseApplicationComponent
 
 	public function getLabels($fieldLayoutId)
 	{
+		$result = RelabelRecord::model()->findAll(
+			'fieldLayoutId='. $fieldLayoutId,
+			array(
+				'id' => null,
+				'fieldId' => null,
+				'fieldLayoutId' => null,
+				'name' => null,
+				'instructions' => null,
+			)
+		);
 
+		return RelabelModel::populateModels($result);
 	}
 
 	public function saveLabel(RelabelModel $label)

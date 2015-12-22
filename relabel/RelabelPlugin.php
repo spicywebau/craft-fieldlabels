@@ -47,6 +47,7 @@ class RelabelPlugin extends BasePlugin
 		if($this->isCraftRequiredVersion())
 		{
 			$this->includeResources();
+			$this->bindEvents();
 		}
 	}
 
@@ -71,6 +72,51 @@ class RelabelPlugin extends BasePlugin
 
 			craft()->templates->includeJsResource('relabel/js/main.js');
 		}
+	}
+
+	protected function bindEvents()
+	{
+		$labels = null;
+
+		craft()->on('sections.beforeSaveEntryType', function(Event $event) use(&$labels)
+		{
+			$entryType = $event->params['entryType'];
+			$isNewEntryType = $event->params['isNewEntryType'];
+
+			if(!$isNewEntryType)
+			{
+				$labels = craft()->relabel->getLabels($entryType->fieldLayoutId);
+			}
+		});
+
+		craft()->on('sections.saveEntryType', function(Event $event) use(&$labels)
+		{
+			$entryType = $event->params['entryType'];
+			$isNewEntryType = $event->params['isNewEntryType'];
+
+			if(!$isNewEntryType && $labels != null)
+			{
+				foreach($labels as $label)
+				{
+					$record = new RelabelRecord();
+					$record->fieldId = $label->fieldId;
+					$record->fieldLayoutId = $entryType->fieldLayoutId;
+					$record->name = $label->name;
+					$record->instructions = $label->instructions;
+
+					$record->save();
+				}
+			}
+		});
+	}
+
+	private function _updateFieldLayoutId($oldId, $newId)
+	{
+		RelabelRecord::model()->updateAll(
+			array('fieldLayoutId' => $newId),
+			'fieldLayoutId=:id',
+			array(':id' => $oldId)
+		);
 	}
 
 	private function _getFields()
