@@ -150,6 +150,7 @@ class RelabelPlugin extends BasePlugin
 		{
 			$output[(int) $field->id] = array(
 				'id' => (int) $field->id,
+				'handle' => $field->handle,
 				'name' => $field->name,
 				'instructions' => $field->instructions
 			);
@@ -186,13 +187,23 @@ class RelabelPlugin extends BasePlugin
 		$tagGroups = craft()->tags->getAllTagGroups();
 		//$userFields = FieldLayoutModel::populateModel(FieldLayoutRecord::model()->findByAttributes('type', ElementType::User));
 
+		$sections = craft()->sections->getSectionsByType(SectionType::Single);
+		$singleSections = array();
+
+		foreach($sections as $section)
+		{
+			$entryType = $section->getEntryTypes()[0];
+			$singleSections[$section->id] = $entryType->fieldLayoutId;
+		}
+
 		return array(
 			'assetSource' => $this->_mapLayouts($assetSources),
 			'categoryGroup' => $this->_mapLayouts($categoryGroups),
 			'globalSet' => $this->_mapLayouts($globalSets),
 			'entryType' => $this->_mapLayouts($entryTypes),
 			'tagGroup' => $this->_mapLayouts($tagGroups),
-			//'userFields' => $userFields->id
+			//'userFields' => $userFields->id,
+			'singleSection' => $singleSections,
 		);
 	}
 

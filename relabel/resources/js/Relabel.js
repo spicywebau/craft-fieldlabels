@@ -10,6 +10,7 @@
 		GLOBAL_SET:     'globalSet',
 		ENTRY:          'entry',
 		ENTRY_TYPE:     'entryType',
+		SINGLE_SECTION: 'singleSection',
 		TAG:            'tag',
 		TAG_GROUP:      'tagGroup',
 		USER:           'user',
@@ -27,11 +28,47 @@
 			this.layouts = {};
 		},
 
+		applyLabels: function(element)
+		{
+			var fieldLayoutId = this.getFieldLayoutId(element);
+			var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
+			var $form = element ? $(element) : Craft.cp.$primaryForm;
+
+			for(var labelId in labels) if(labels.hasOwnProperty(labelId))
+			{
+				var label = labels[labelId];
+				var field = this.getFieldInfo(label.fieldId);
+				var $field = $form.find('#fields-' + field.handle + '-field');
+				var $label = $field.find('label[for="fields-' + field.handle + '"]');
+				var $instruct = $field.find('.instructions > p');
+
+				if(label.name)
+				{
+					$label.text(label.name);
+				}
+
+				if(label.instructions)
+				{
+					if($instruct.length)
+					{
+						$instruct.text(label.instructions);
+					}
+					else if(label.instructions)
+					{
+						$instruct = $('<div class="instructions">').insertAfter($label);
+						$('<p>').text(label.instructions).appendTo($instruct);
+					}
+				}
+			}
+		},
+
 		getContext: function(element)
 		{
 			var $form = element ? $(element) : Craft.cp.$primaryForm;
 			var $action = $form.find('input[name="action"]');
 			var action = $action.val();
+			var $namespace = $form.find('input[name="namespace"]');
+			var namespace = $namespace.val() || '';
 
 			if(action)
 			{
@@ -43,7 +80,11 @@
 					case 'categories/saveGroup':    return this.CATEGORY_GROUP;
 					case 'globals/saveContent':     return this.GLOBAL;
 					case 'globals/saveSet':         return this.GLOBAL_SET;
-					case 'entries/saveEntry':       return this.ENTRY;
+					case 'entries/saveEntry':
+					{
+						var $entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
+						return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
+					}
 					case 'sections/saveEntryType':  return this.ENTRY_TYPE;
 					case 'tags/saveTagGroup':       return this.TAG_GROUP;
 					case 'users/users/saveUser':    return this.USER;
@@ -62,8 +103,7 @@
 
 			// TODO Element modal forms are tricky for assets, categories and tags, need to find a way of detecting the field layout types
 			var $namespace = $form.find('input[name="namespace"]');
-			var namespace = $namespace.val();
-			namespace = namespace ? namespace : '';
+			var namespace = $namespace.val() || '';
 
 			switch(type)
 			{
@@ -74,7 +114,8 @@
 				case this.GLOBAL:
 				case this.GLOBAL_SET: selector = 'input[name="setId"]'; break;
 				case this.ENTRY:
-				case this.ENTRY_TYPE: selector = 'input[name="entryTypeId"], #' + namespace + 'entryType'; break;
+				case this.ENTRY_TYPE: selector = 'input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType'; break;
+				case this.SINGLE_SECTION: selector = 'input[name="sectionId"], #' + namespace + 'section'; break;
 				case this.TAG:
 				case this.TAG_GROUP: break;
 			}
@@ -97,6 +138,21 @@
 				}
 				else
 				{
+					switch(context)
+					{
+						case this.ASSET:
+						case this.ASSET_SOURCE: context = 'assetSource'; break;
+						case this.CATEGORY:
+						case this.CATEGORY_GROUP: context = 'categoryGroup'; break;
+						case this.GLOBAL:
+						case this.GLOBAL_SET: context = 'globalSet'; break;
+						case this.ENTRY:
+						case this.ENTRY_TYPE: context = 'entryType'; break;
+						case this.SINGLE_SECTION: context = 'singleSection'; break;
+						case this.TAG:
+						case this.TAG_GROUP: context = 'tagGroup'; break;
+					}
+
 					return this.layouts[context][contextId] | 0;
 				}
 			}
@@ -213,5 +269,10 @@
 	});
 
 	window.Relabel = new Relabel();
+
+	$(function()
+	{
+		window.Relabel.applyLabels();
+	});
 
 })(jQuery);
