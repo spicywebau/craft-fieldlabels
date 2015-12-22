@@ -76,6 +76,11 @@ class RelabelPlugin extends BasePlugin
 
 	protected function bindEvents()
 	{
+		$this->bindEntryTypeEvents();
+	}
+
+	protected function bindEntryTypeEvents()
+	{
 		$labels = null;
 
 		craft()->on('sections.beforeSaveEntryType', function(Event $event) use(&$labels)
@@ -85,7 +90,7 @@ class RelabelPlugin extends BasePlugin
 
 			if(!$isNewEntryType)
 			{
-				$labels = craft()->relabel->getLabels($entryType->fieldLayoutId);
+				$this->_beforeSave($labels, $entryType->fieldLayoutId);
 			}
 		});
 
@@ -96,27 +101,44 @@ class RelabelPlugin extends BasePlugin
 
 			if(!$isNewEntryType && $labels != null)
 			{
-				foreach($labels as $label)
-				{
-					$record = new RelabelRecord();
-					$record->fieldId = $label->fieldId;
-					$record->fieldLayoutId = $entryType->fieldLayoutId;
-					$record->name = $label->name;
-					$record->instructions = $label->instructions;
-
-					$record->save();
-				}
+				$this->_afterSave($labels, $entryType->fieldLayoutId);
 			}
 		});
 	}
 
-	private function _updateFieldLayoutId($oldId, $newId)
+	private function _beforeSave(&$labels, $fieldLayoutId)
 	{
-		RelabelRecord::model()->updateAll(
-			array('fieldLayoutId' => $newId),
-			'fieldLayoutId=:id',
-			array(':id' => $oldId)
-		);
+		$labels = craft()->relabel->getLabels($fieldLayoutId);
+	}
+
+	private function _afterSave(&$labels, $fieldLayoutId)
+	{
+		$transaction = craft()->db->getCurrentTransaction() ? false : craft()->db->beginTransaction();
+
+		try
+		{
+			foreach($labels as $label)
+			{
+				$label->id = null;
+				$label->fieldLayoutId = $fieldLayoutId;
+
+				craft()->relabel->saveLabel($label);
+			}
+
+			if($transaction)
+			{
+				$transaction->commit();
+			}
+		}
+		catch(\Exception $e)
+		{
+			if($transaction)
+			{
+				$transaction->rollback();
+			}
+
+			throw $e;
+		}
 	}
 
 	private function _getFields()
