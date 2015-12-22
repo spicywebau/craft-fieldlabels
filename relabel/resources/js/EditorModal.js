@@ -148,8 +148,26 @@
 
 		displayErrors: function(attr, errors)
 		{
-			var $input = this['$' + attr + 'Field'];
-			var $errorList = this['$' + attr + 'Errors'];
+			var $input;
+			var $errorList;
+
+			switch(attr)
+			{
+				case 'name':
+				{
+					$input = this.$nameField;
+					$errorList = this.$nameErrors;
+
+					break;
+				}
+				case 'instruct':
+				{
+					$input = this.$instructField;
+					$errorList = this.$instructErrors;
+
+					break;
+				}
+			}
 
 			$errorList.children().remove();
 
