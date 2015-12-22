@@ -49,15 +49,13 @@
 
 				if(label.instructions)
 				{
-					if($instruct.length)
+					if($instruct.length === 0)
 					{
-						$instruct.text(label.instructions);
+						var $instructParent = $('<div class="instructions">').insertAfter($label);
+						$instruct = $('<p>').appendTo($instructParent);
 					}
-					else if(label.instructions)
-					{
-						$instruct = $('<div class="instructions">').insertAfter($label);
-						$('<p>').text(label.instructions).appendTo($instruct);
-					}
+					
+					$instruct.text(label.instructions);
 				}
 			}
 		},
