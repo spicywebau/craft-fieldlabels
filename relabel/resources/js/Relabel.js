@@ -105,17 +105,17 @@
 
 			switch(type)
 			{
-				case this.ASSET:
-				case this.ASSET_SOURCE: break;
-				case this.CATEGORY:
+				case this.ASSET:          break;
+				case this.ASSET_SOURCE:   selector = 'input[name="sourceId"]'; break;
+				case this.CATEGORY:       selector = 'input[name="groupId"]'; break;
 				case this.CATEGORY_GROUP: selector = 'input[name="groupId"]'; break;
-				case this.GLOBAL:
-				case this.GLOBAL_SET: selector = 'input[name="setId"]'; break;
-				case this.ENTRY:
-				case this.ENTRY_TYPE: selector = 'input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType'; break;
+				case this.GLOBAL:         selector = 'input[name="setId"]'; break;
+				case this.GLOBAL_SET:     selector = 'input[name="setId"]'; break;
+				case this.ENTRY:          selector = 'input[name="typeId"], #' + namespace + 'entryType'; break;
+				case this.ENTRY_TYPE:     selector = 'input[name="entryTypeId"]'; break;
 				case this.SINGLE_SECTION: selector = 'input[name="sectionId"], #' + namespace + 'section'; break;
-				case this.TAG:
-				case this.TAG_GROUP: break;
+				case this.TAG:            break;
+				case this.TAG_GROUP:      selector = 'input[name="tagGroupId"]'; break;
 			}
 
 			var $input = $form.find(selector);
@@ -139,16 +139,16 @@
 					switch(context)
 					{
 						case this.ASSET:
-						case this.ASSET_SOURCE: context = 'assetSource'; break;
+						case this.ASSET_SOURCE:   context = 'assetSource'; break;
 						case this.CATEGORY:
 						case this.CATEGORY_GROUP: context = 'categoryGroup'; break;
 						case this.GLOBAL:
-						case this.GLOBAL_SET: context = 'globalSet'; break;
+						case this.GLOBAL_SET:     context = 'globalSet'; break;
 						case this.ENTRY:
-						case this.ENTRY_TYPE: context = 'entryType'; break;
+						case this.ENTRY_TYPE:     context = 'entryType'; break;
 						case this.SINGLE_SECTION: context = 'singleSection'; break;
 						case this.TAG:
-						case this.TAG_GROUP: context = 'tagGroup'; break;
+						case this.TAG_GROUP:      context = 'tagGroup'; break;
 					}
 
 					return this.layouts[context][contextId] | 0;
