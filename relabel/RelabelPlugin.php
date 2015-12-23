@@ -91,8 +91,16 @@ class RelabelPlugin extends BasePlugin
 						$label = new RelabelModel();
 						$label->fieldId = $fieldId;
 						$label->fieldLayoutId = $layout->id;
-						$label->name = $labelInfo['name'];
-						$label->instructions = $labelInfo['instructions'];
+
+						if(array_key_exists('name', $labelInfo))
+						{
+							$label->name = $labelInfo['name'];
+						}
+
+						if(array_key_exists('instructions', $labelInfo))
+						{
+							$label->instructions = $labelInfo['instructions'];
+						}
 
 						craft()->relabel->saveLabel($label);
 					}
