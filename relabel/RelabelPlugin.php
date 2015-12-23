@@ -47,7 +47,7 @@ class RelabelPlugin extends BasePlugin
 		if($this->isCraftRequiredVersion())
 		{
 			$this->includeResources();
-			$this->bindEvents();
+			$this->bindEvent();
 		}
 	}
 
@@ -74,71 +74,48 @@ class RelabelPlugin extends BasePlugin
 		}
 	}
 
-	protected function bindEvents()
+	protected function bindEvent()
 	{
-		$this->bindEntryTypeEvents();
-	}
-
-	protected function bindEntryTypeEvents()
-	{
-		$labels = null;
-
-		craft()->on('sections.beforeSaveEntryType', function(Event $event) use(&$labels)
+		craft()->on('fields.saveFieldLayout', function(Event $e)
 		{
-			$entryType = $event->params['entryType'];
-			$isNewEntryType = $event->params['isNewEntryType'];
+			$layout = $e->params['layout'];
+			$relabel = craft()->request->getPost('relabel');
 
-			if(!$isNewEntryType)
+			if($relabel)
 			{
-				$this->_beforeSave($labels, $entryType->fieldLayoutId);
+				$transaction = craft()->db->getCurrentTransaction() ? false : craft()->db->beginTransaction();
+				try
+				{
+					foreach($relabel as $fieldId => $labelInfo)
+					{
+						$label = new RelabelModel();
+						$label->fieldId = $fieldId;
+						$label->fieldLayoutId = $layout->id;
+						$label->name = $labelInfo['name'];
+						$label->instructions = $labelInfo['instructions'];
+
+						craft()->relabel->saveLabel($label);
+					}
+
+					if($transaction)
+					{
+						$transaction->commit();
+					}
+				}
+				catch(\Exception $e)
+				{
+					if($transaction)
+					{
+						$transaction->rollback();
+					}
+
+					throw $e;
+				}
+
+				// Make sure these labels don't get saved more than once
+				unset($_POST['relabel']);
 			}
 		});
-
-		craft()->on('sections.saveEntryType', function(Event $event) use(&$labels)
-		{
-			$entryType = $event->params['entryType'];
-			$isNewEntryType = $event->params['isNewEntryType'];
-
-			if(!$isNewEntryType && $labels != null)
-			{
-				$this->_afterSave($labels, $entryType->fieldLayoutId);
-			}
-		});
-	}
-
-	private function _beforeSave(&$labels, $fieldLayoutId)
-	{
-		$labels = craft()->relabel->getLabels($fieldLayoutId);
-	}
-
-	private function _afterSave(&$labels, $fieldLayoutId)
-	{
-		$transaction = craft()->db->getCurrentTransaction() ? false : craft()->db->beginTransaction();
-
-		try
-		{
-			foreach($labels as $label)
-			{
-				$label->id = null;
-				$label->fieldLayoutId = $fieldLayoutId;
-
-				craft()->relabel->saveLabel($label);
-			}
-
-			if($transaction)
-			{
-				$transaction->commit();
-			}
-		}
-		catch(\Exception $e)
-		{
-			if($transaction)
-			{
-				$transaction->rollback();
-			}
-
-			throw $e;
-		}
 	}
 
 	private function _getFields()

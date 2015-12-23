@@ -2,24 +2,15 @@
 {
 	var EditorModal = Garnish.Modal.extend({
 
-		fieldId:       null,
-		fieldLayoutId: null,
 		origName:      null,
 		origInstruct:  null,
 
-		init: function(field)
+		init: function(origName, origInstruct)
 		{
 			this.base();
 
-			this._proxyOnSaveLabel = $.proxy(this.onSaveLabel, this);
-			Relabel.on('saveLabel', this._proxyOnSaveLabel);
-
-			this.fieldId = field;
-			this.fieldLayoutId = Relabel.getFieldLayoutId();
-
-			var info = Relabel.getFieldInfo(field);
-			this.origName     = info && typeof info.name         === 'string' ? info.name         : '';
-			this.origInstruct = info && typeof info.instructions === 'string' ? info.instructions : '';
+			this.origName     = origName;
+			this.origInstruct = origInstruct;
 
 			this.$form = $('<form class="modal fitted">').appendTo(Garnish.$bod);
 			this.setContainer(this.$form);
@@ -77,12 +68,10 @@
 				return;
 			}
 
-			Relabel.saveLabel(
-				this.fieldId,
-				Relabel.getFieldLayoutId(),
-				this.$nameField.val(),
-				this.$instructField.val()
-			);
+			this.trigger('setLabel', {
+				name: this.$nameField.val(),
+				instructions: this.$instructField.val()
+			});
 
 			this.hide();
 		},
@@ -98,23 +87,14 @@
 		{
 			this.base();
 
-			Relabel.off('onSaveLabel', this._proxyOnSaveLabel);
 			this.$container.remove();
 			this.$shade.remove();
 		},
 
-		show: function(errors)
+		show: function(name, instruct)
 		{
-			var label = Relabel.getLabel(this.fieldId, this.fieldLayoutId);
-
-			if(label)
-			{
-				this.$nameField.val(label.name);
-				this.$instructField.val(label.instructions);
-			}
-
-			this.displayErrors('name', (errors ? errors.name : null));
-			this.displayErrors('instruct', (errors ? errors.instructions : null));
+			if(name)     this.$nameField.val(name);
+			if(instruct) this.$instructField.val(instruct);
 
 			if(!Garnish.isMobileBrowser())
 			{
@@ -125,25 +105,6 @@
 			}
 
 			this.base();
-		},
-
-		onSaveLabel: function(e)
-		{
-			if(e.label && !e.errors)
-			{
-				this.hide();
-			}
-			else if(e.errors)
-			{
-				if(this.visible)
-				{
-					Garnish.shake(this.$container);
-				}
-			}
-			else
-			{
-
-			}
 		},
 
 		displayErrors: function(attr, errors)

@@ -6,6 +6,9 @@
 	var Editor = Garnish.Base.extend({
 
 		fld: null,
+		labels: null,
+
+		$form: null,
 
 		init: function(fld)
 		{
@@ -16,41 +19,75 @@
 			}
 
 			this.fld = fld;
-
 			this.fld.on('relabelOptionSelected', $.proxy(this.openModal, this));
 
-			this._proxyOnSaveLabel = $.proxy(this.onSaveLabel, this);
-			Relabel.on('saveLabel', this._proxyOnSaveLabel);
+			this.$form = this.fld.$container.closest('form');
 
-			this.updateClasses();
+			this.labels = {};
+
+			var fieldLayoutId = Relabel.getFieldLayoutId(this.$form);
+			if(fieldLayoutId !== false)
+			{
+				var initLabels = Relabel.getLabelsOnFieldLayout(fieldLayoutId);
+				for(var labelId in initLabels) if(initLabels.hasOwnProperty(labelId))
+				{
+					var label = initLabels[labelId];
+					this.setFormData(label.fieldId, label.name, label.instructions);
+				}
+			}
 		},
 
 		openModal: function(e)
 		{
-			var modal = new Editor.Modal(e.id);
+			var fieldId = e.id;
 
-			modal.show();
-		},
+			var info = Relabel.getFieldInfo(fieldId);
+			var origName     = info && typeof info.name         === 'string' ? info.name         : '';
+			var origInstruct = info && typeof info.instructions === 'string' ? info.instructions : '';
 
-		onSaveLabel: function(e)
-		{
-			this.updateClasses();
-		},
+			var modal = new Editor.Modal(origName, origInstruct);
+			var label = this.labels[fieldId];
 
-		updateClasses: function()
-		{
-			var labels = Relabel.getLabelsOnFieldLayout();
-			var $container = this.fld.$container;
-
-			$container.find('.fld-field')
-				.removeClass('relabelled');
-
-			for(var id in labels) if(labels.hasOwnProperty(id))
+			var that = this;
+			modal.on('setLabel', function(f)
 			{
-				var label = labels[id];
+				that.setFormData(fieldId, f.name, f.instructions);
+			});
 
-				$container.find('.fld-field[data-id="' + label.fieldId + '"]')
-					.addClass('relabelled');
+			modal.show(
+				label ? label.name : '',
+				label ? label.instructions : ''
+			);
+		},
+
+		setFormData: function(fieldId, name, instruct)
+		{
+			var $container = this.fld.$container;
+			var $field = $container.find('.fld-field[data-id="' + fieldId + '"]');
+
+			var nameField = 'relabel[' + fieldId + '][name]';
+			var instructField = 'relabel[' + fieldId + '][instructions]';
+
+			$field.children('input[name="' + nameField + '"]').remove();
+			$field.children('input[name="' + instructField + '"]').remove();
+
+			if(name)     $('<input type="hidden" name="' + nameField     + '">').val(name).appendTo($field);
+			if(instruct) $('<input type="hidden" name="' + instructField + '">').val(instruct).appendTo($field);
+
+			var hasLabel = !!(name || instruct);
+
+			$field.toggleClass('relabelled', hasLabel);
+
+			if(hasLabel)
+			{
+				this.labels[fieldId] = {
+					name: name,
+					instructions: instruct
+				};
+			}
+			else
+			{
+				delete this.labels[fieldId];
 			}
 		}
 	});
