@@ -44,7 +44,7 @@
 
 				if(label.name)
 				{
-					$label.text(label.name);
+					$label.text(Craft.t(label.name));
 				}
 
 				if(label.instructions)
@@ -55,7 +55,7 @@
 						$instruct = $('<p>').appendTo($instructParent);
 					}
 					
-					$instruct.text(label.instructions);
+					$instruct.text(Craft.t(label.instructions));
 				}
 			}
 		},
