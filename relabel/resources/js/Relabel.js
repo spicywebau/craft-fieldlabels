@@ -105,17 +105,26 @@
 
 			if(Craft.ElementEditor)
 			{
-				/*
-				 var EE = Craft.ElementEditor;
-				 var EE_init = EE.prototype.init;
+				var EE = Craft.ElementEditor;
+				var EE_show = EE.prototype.showHud;
+				var EE_update = EE.prototype.updateForm;
 
-				 EE.prototype.init = function()
-				 {
-				 EE_init.apply(this, arguments);
+				EE.prototype.showHud = function()
+				{
+					EE_show.apply(this, arguments);
 
-				 console.log(this);
-				 };
-				 */
+					window.Relabel.applyLabels(this.hud.$hud);
+				};
+
+				EE.prototype.updateForm = function()
+				{
+					EE_update.apply(this, arguments);
+
+					if(this.hud)
+					{
+						window.Relabel.applyLabels(this.hud.$hud);
+					}
+				}
 			}
 		},
 
@@ -125,13 +134,18 @@
 			var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
 			var $form = element ? $(element) : Craft.cp.$primaryForm;
 
+			var $namespace = $form.find('input[name="namespace"]');
+			var namespace = $namespace.val() ? $namespace.val() + '-' : '';
+
+			var elementEditor = $form.data('elementEditor');
+
 			for(var labelId in labels) if(labels.hasOwnProperty(labelId))
 			{
 				var label = labels[labelId];
 				var field = this.getFieldInfo(label.fieldId);
-				var $field = $form.find('#fields-' + field.handle + '-field');
-				var $label = $field.find('label[for="fields-' + field.handle + '"]');
-				var $instruct = $field.find('.instructions > p');
+				var $field = $form.find('#' + namespace + 'fields-' + field.handle + '-field');
+				var $heading = $field.children('.heading');
+				var $label = $heading.children('label');
 
 				if(label.name)
 				{
@@ -140,13 +154,30 @@
 
 				if(label.instructions)
 				{
-					if($instruct.length === 0)
+					if(elementEditor)
 					{
-						var $instructParent = $('<div class="instructions">').insertAfter($label);
-						$instruct = $('<p>').appendTo($instructParent);
+						var $info = $heading.children('.info');
+
+						if($info.length === 0)
+						{
+							$info = $('<span class="info">').insertAfter($label);
+							$info.before('&nbsp;');
+						}
+
+						$info.text(Craft.t(label.instructions));
 					}
-					
-					$instruct.text(Craft.t(label.instructions));
+					else
+					{
+						var $instruct = $heading.find('.instructions > p');
+
+						if($instruct.length === 0)
+						{
+							var $instructParent = $('<div class="instructions">').insertAfter($label);
+							$instruct = $('<p>').appendTo($instructParent);
+						}
+
+						$instruct.text(Craft.t(label.instructions));
+					}
 				}
 			}
 		},
@@ -154,30 +185,49 @@
 		getContext: function(element)
 		{
 			var $form = element ? $(element) : Craft.cp.$primaryForm;
-			var $action = $form.find('input[name="action"]');
-			var action = $action.val();
-			var $namespace = $form.find('input[name="namespace"]');
-			var namespace = $namespace.val() || '';
+			var $entryType;
 
-			if(action)
+			var $namespace = $form.find('input[name="namespace"]');
+			var namespace = $namespace.val() ? $namespace.val() + '-' : '';
+
+			var elementEditor = $form.data('elementEditor');
+
+			if(elementEditor)
 			{
-				switch(action)
+				switch(elementEditor.settings.elementType)
 				{
-					// TODO Element modal forms are tricky, need a way of detecting this for them
-					case 'assetSources/saveSource': return this.ASSET_SOURCE;
-					case 'categories/saveCategory': return this.CATEGORY;
-					case 'categories/saveGroup':    return this.CATEGORY_GROUP;
-					case 'globals/saveContent':     return this.GLOBAL;
-					case 'globals/saveSet':         return this.GLOBAL_SET;
-					case 'entries/saveEntry':
+					// TODO All other cases
+					case 'Entry':
 					{
-						var $entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
+						$entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
 						return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
 					}
-					case 'sections/saveEntryType':  return this.ENTRY_TYPE;
-					case 'tags/saveTagGroup':       return this.TAG_GROUP;
-					case 'users/users/saveUser':    return this.USER;
-					case 'users/saveFieldLayout':   return this.USER_FIELDS;
+				}
+			}
+			else
+			{
+				var $action = $form.find('input[name="action"]');
+				var action = $action.val();
+
+				if(action)
+				{
+					switch(action)
+					{
+						case 'assetSources/saveSource': return this.ASSET_SOURCE;
+						case 'categories/saveCategory': return this.CATEGORY;
+						case 'categories/saveGroup':    return this.CATEGORY_GROUP;
+						case 'globals/saveContent':     return this.GLOBAL;
+						case 'globals/saveSet':         return this.GLOBAL_SET;
+						case 'entries/saveEntry':
+						{
+							$entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
+							return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
+						}
+						case 'sections/saveEntryType':  return this.ENTRY_TYPE;
+						case 'tags/saveTagGroup':       return this.TAG_GROUP;
+						case 'users/users/saveUser':    return this.USER;
+						case 'users/saveFieldLayout':   return this.USER_FIELDS;
+					}
 				}
 			}
 
@@ -190,9 +240,28 @@
 			var type = this.getContext($form);
 			var selector;
 
-			// TODO Element modal forms are tricky for assets, categories and tags, need to find a way of detecting the field layout types
 			var $namespace = $form.find('input[name="namespace"]');
-			var namespace = $namespace.val() || '';
+			var namespace = $namespace.val() ? $namespace.val() + '-' : '';
+
+			var elementEditor = $form.data('elementEditor');
+
+			if(elementEditor)
+			{
+				var id;
+				var ids = elementEditor.settings.attributes;
+
+				switch(type)
+				{
+					// TODO rest of them
+					case this.ENTRY:          id = ids.typeId; break;
+					case this.SINGLE_SECTION: id = ids.sectionId; break;
+				}
+
+				if(id)
+				{
+					return id | 0;
+				}
+			}
 
 			switch(type)
 			{
