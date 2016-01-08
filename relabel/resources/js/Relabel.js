@@ -109,6 +109,14 @@
 				var EE_show = EE.prototype.showHud;
 				var EE_update = EE.prototype.updateForm;
 
+				EE.prototype.loadHud = function()
+				{
+					this.onBeginLoading();
+					var data = this.getBaseData();
+					data.includeLocales = this.settings.showLocaleSwitcher;
+					Craft.postActionRequest('relabel/getEditorHtml', data, $.proxy(this, 'showHud'));
+				};
+
 				EE.prototype.showHud = function()
 				{
 					EE_show.apply(this, arguments);
