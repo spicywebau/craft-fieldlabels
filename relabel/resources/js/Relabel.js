@@ -129,8 +129,9 @@
 
 						switch(response.elementType)
 						{
-							case window.Relabel.ASSET: id = response.assetSourceId; break;
-							case window.Relabel.ENTRY: id = response.entryTypeId;   break;
+							case window.Relabel.ASSET:    id = response.assetSourceId;   break;
+							case window.Relabel.CATEGORY: id = response.categoryGroupId; break;
+							case window.Relabel.ENTRY:    id = response.entryTypeId;     break;
 						}
 
 						if(id !== false)
