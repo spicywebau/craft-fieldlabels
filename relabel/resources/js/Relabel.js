@@ -109,10 +109,10 @@
 				var EE_show = EE.prototype.showHud;
 				var EE_update = EE.prototype.updateForm;
 
+				EE.prototype._relabelFLID = null;
+
 				EE.prototype.loadHud = function()
 				{
-					this._relabelFLID = null;
-
 					this.onBeginLoading();
 					var data = this.getBaseData();
 					data.includeLocales = this.settings.showLocaleSwitcher;
