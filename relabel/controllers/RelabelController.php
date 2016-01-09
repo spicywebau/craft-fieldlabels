@@ -55,6 +55,12 @@ class RelabelController extends BaseController
 
 				switch($elementType)
 				{
+					case ElementType::Asset:
+					{
+						$json['elementType'] = 'asset';
+						$json['assetSourceId'] = $element->sourceId;
+						break;
+					}
 					case ElementType::Entry:
 					{
 						$json['elementType'] = 'entry';

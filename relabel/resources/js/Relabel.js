@@ -125,11 +125,17 @@
 
 					if(textStatus === 'success' && response.elementType)
 					{
+						var id = false;
+
 						switch(response.elementType)
 						{
-							case window.Relabel.ENTRY:
-								fieldLayoutId = window.Relabel.getFieldLayoutId(window.Relabel.ENTRY, response.entryTypeId);
-								break;
+							case window.Relabel.ASSET: id = response.assetSourceId; break;
+							case window.Relabel.ENTRY: id = response.entryTypeId;   break;
+						}
+
+						if(id !== false)
+						{
+							fieldLayoutId = window.Relabel.getFieldLayoutId(response.elementType, id);
 						}
 					}
 
