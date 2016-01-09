@@ -15,9 +15,14 @@ class RelabelPlugin extends BasePlugin
 		return Craft::t('Relabel');
 	}
 
+	public function getDescription()
+	{
+		return 'Override field labels and instructions in the field layout designer';
+	}
+
 	function getVersion()
 	{
-		return '0.0.1';
+		return '0.1.0';
 	}
 
 	public function getSchemaVersion()
@@ -32,12 +37,17 @@ class RelabelPlugin extends BasePlugin
 
 	function getDeveloperUrl()
 	{
-		return 'http://benf.co';
+		return 'http://benjamminf.github.io';
 	}
 
 	public function getDocumentationUrl()
 	{
 		return 'https://github.com/benjamminf/craft-relabel/blob/master/README.md';
+	}
+
+	public function getReleaseFeedUrl()
+	{
+		return 'https://raw.githubusercontent.com/benjamminf/craft-relabel/master/releases.json';
 	}
 
 	public function init()
