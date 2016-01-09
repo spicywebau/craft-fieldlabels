@@ -132,6 +132,7 @@
 							case window.Relabel.ASSET:    id = response.assetSourceId;   break;
 							case window.Relabel.CATEGORY: id = response.categoryGroupId; break;
 							case window.Relabel.ENTRY:    id = response.entryTypeId;     break;
+							case window.Relabel.TAG:      id = response.tagGroupId;      break;
 						}
 
 						if(id !== false)

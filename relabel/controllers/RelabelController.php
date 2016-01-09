@@ -74,6 +74,12 @@ class RelabelController extends BaseController
 						$json['entryTypeId'] = $element->typeId;
 						break;
 					}
+					case ElementType::Tag:
+					{
+						$json['elementType'] = 'tag';
+						$json['tagGroupId'] = $element->groupId;
+						break;
+					}
 				}
 
 				echo JsonHelper::encode($json);
