@@ -117,11 +117,23 @@
 					Craft.postActionRequest('relabel/getEditorHtml', data, $.proxy(this, 'showHud'));
 				};
 
-				EE.prototype.showHud = function()
+				EE.prototype.showHud = function(response, textStatus)
 				{
+					var fieldLayoutId = null;
+
 					EE_show.apply(this, arguments);
 
-					window.Relabel.applyLabels(this.hud.$hud);
+					if(textStatus === 'success' && response.elementType)
+					{
+						switch(response.elementType)
+						{
+							case window.Relabel.ENTRY:
+								fieldLayoutId = window.Relabel.getFieldLayoutId(window.Relabel.ENTRY, response.entryTypeId);
+								break;
+						}
+					}
+
+					window.Relabel.applyLabels(this.hud.$hud, fieldLayoutId);
 				};
 
 				EE.prototype.updateForm = function()
@@ -136,9 +148,13 @@
 			}
 		},
 
-		applyLabels: function(element)
+		applyLabels: function(element, fieldLayoutId)
 		{
-			var fieldLayoutId = this.getFieldLayoutId(element);
+			if(fieldLayoutId === null || typeof fieldLayoutId === 'undefined')
+			{
+				fieldLayoutId = this.getFieldLayoutId(element);
+			}
+
 			var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
 			var $form = element ? $(element) : Craft.cp.$primaryForm;
 
@@ -291,12 +307,29 @@
 			return $input.length ? ($input.val() | 0) : false;
 		},
 
-		getFieldLayoutId: function(element)
+		getFieldLayoutId: function(/*element | (context, contextId)*/)
 		{
-			var context = this.getContext(element);
-			var contextId = this.getContextId(element);
+			var context = false;
+			var contextId = false;
 
-			if(contextId)
+			switch(arguments.length)
+			{
+				case 1:
+				{
+					context = this.getContext(arguments[0]);
+					contextId = this.getContextId(arguments[0]);
+					break;
+				}
+				case 2:
+				{
+					context = arguments[0];
+					contextId = arguments[1];
+					break;
+				}
+			}
+
+
+			if(contextId !== false)
 			{
 				if(context === this.USER_FIELDS)
 				{
