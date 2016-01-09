@@ -111,6 +111,8 @@
 
 				EE.prototype.loadHud = function()
 				{
+					this._relabelFLID = null;
+
 					this.onBeginLoading();
 					var data = this.getBaseData();
 					data.includeLocales = this.settings.showLocaleSwitcher;
@@ -119,8 +121,6 @@
 
 				EE.prototype.showHud = function(response, textStatus)
 				{
-					var fieldLayoutId = null;
-
 					EE_show.apply(this, arguments);
 
 					if(textStatus === 'success' && response.elementType)
@@ -135,11 +135,11 @@
 
 						if(id !== false)
 						{
-							fieldLayoutId = window.Relabel.getFieldLayoutId(response.elementType, id);
+							this._relabelFLID = window.Relabel.getFieldLayoutId(response.elementType, id);
 						}
 					}
 
-					window.Relabel.applyLabels(this.hud.$hud, fieldLayoutId);
+					window.Relabel.applyLabels(this.hud.$hud, this._relabelFLID);
 				};
 
 				EE.prototype.updateForm = function()
@@ -148,7 +148,7 @@
 
 					if(this.hud)
 					{
-						window.Relabel.applyLabels(this.hud.$hud);
+						window.Relabel.applyLabels(this.hud.$hud, this._relabelFLID);
 					}
 				}
 			}
