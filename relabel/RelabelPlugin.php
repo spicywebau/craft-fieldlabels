@@ -181,7 +181,7 @@ class RelabelPlugin extends BasePlugin
 		$tagGroups = craft()->tags->getAllTagGroups();
 		//$userFields = FieldLayoutModel::populateModel(FieldLayoutRecord::model()->findByAttributes('type', ElementType::User));
 
-		$sections = craft()->sections->getSectionsByType(SectionType::Single);
+		$sections = craft()->sections->getAllSections();
 		$singleSections = array();
 
 		foreach($sections as $section)
