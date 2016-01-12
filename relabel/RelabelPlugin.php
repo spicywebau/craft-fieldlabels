@@ -187,7 +187,7 @@ class RelabelPlugin extends BasePlugin
 		foreach($sections as $section)
 		{
 			$entryType = $section->getEntryTypes()[0];
-			$singleSections[$section->id] = $entryType->fieldLayoutId;
+			$singleSections[$section->id] = (int) $entryType->fieldLayoutId;
 		}
 
 		return array(
