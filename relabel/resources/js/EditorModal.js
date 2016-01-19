@@ -1,5 +1,10 @@
 (function($)
 {
+	if(!$ || !window.Garnish || !window.Craft)
+	{
+		return;
+	}
+
 	var EditorModal = Garnish.Modal.extend({
 
 		origName:      null,
@@ -152,4 +157,4 @@
 
 	Relabel.Editor.Modal = EditorModal;
 
-})(jQuery);
+})(window.jQuery);

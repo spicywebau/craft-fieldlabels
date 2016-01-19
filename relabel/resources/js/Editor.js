@@ -1,5 +1,10 @@
 (function($)
 {
+	if(!$ || !window.Garnish || !window.Craft)
+	{
+		return;
+	}
+
 	/**
 	 * Editor class
 	 */
@@ -94,4 +99,4 @@
 
 	Relabel.Editor = Editor;
 
-})(jQuery);
+})(window.jQuery);
