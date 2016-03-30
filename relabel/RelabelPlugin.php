@@ -22,7 +22,7 @@ class RelabelPlugin extends BasePlugin
 
 	function getVersion()
 	{
-		return '0.1.1';
+		return '0.1.2';
 	}
 
 	public function getSchemaVersion()
@@ -72,7 +72,7 @@ class RelabelPlugin extends BasePlugin
 		{
 			craft()->templates->includeCssResource('relabel/css/main.css');
 			craft()->templates->includeJsResource('relabel/js/Relabel.js');
-			
+
 			if(craft()->userSession->isAdmin())
 			{
 				craft()->templates->includeJsResource('relabel/js/Editor.js');
