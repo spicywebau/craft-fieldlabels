@@ -68,13 +68,16 @@ class RelabelPlugin extends BasePlugin
 
 	protected function includeResources()
 	{
-		if(craft()->request->isCpRequest() && !craft()->request->isAjaxRequest() && craft()->userSession->isAdmin())
+		if(craft()->request->isCpRequest() && !craft()->request->isAjaxRequest())
 		{
 			craft()->templates->includeCssResource('relabel/css/main.css');
-
 			craft()->templates->includeJsResource('relabel/js/Relabel.js');
-			craft()->templates->includeJsResource('relabel/js/Editor.js');
-			craft()->templates->includeJsResource('relabel/js/EditorModal.js');
+			
+			if(craft()->userSession->isAdmin())
+			{
+				craft()->templates->includeJsResource('relabel/js/Editor.js');
+				craft()->templates->includeJsResource('relabel/js/EditorModal.js');
+			}
 
 			craft()->templates->includeJs('Relabel.fields=' . json_encode($this->_getFields()));
 			craft()->templates->includeJs('Relabel.labels=' . json_encode($this->_getLabels()));
