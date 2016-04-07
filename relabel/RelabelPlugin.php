@@ -167,8 +167,8 @@ class RelabelPlugin extends BasePlugin
 				'id' => (int) $label->id,
 				'fieldId' => (int) $label->fieldId,
 				'fieldLayoutId' => (int) $label->fieldLayoutId,
-				'name' => $label->name,
-				'instructions' => $label->instructions
+				'name' => Craft::t($label->name),
+				'instructions' => Craft::t($label->instructions),
 			);
 		}
 
