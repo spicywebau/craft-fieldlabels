@@ -13,6 +13,8 @@
 		fld: null,
 		labels: null,
 
+		namespace: 'relabel',
+
 		$form: null,
 
 		init: function(fld)
@@ -70,8 +72,8 @@
 			var $container = this.fld.$container;
 			var $field = $container.find('.fld-field[data-id="' + fieldId + '"]');
 
-			var nameField = 'relabel[' + fieldId + '][name]';
-			var instructField = 'relabel[' + fieldId + '][instructions]';
+			var nameField = this.namespace + '[' + fieldId + '][name]';
+			var instructField = this.namespace + '[' + fieldId + '][instructions]';
 
 			$field.children('input[name="' + nameField + '"]').remove();
 			$field.children('input[name="' + instructField + '"]').remove();
