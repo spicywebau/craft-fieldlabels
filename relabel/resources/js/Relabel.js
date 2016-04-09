@@ -162,7 +162,7 @@
 				}
 			},
 
-			applyLabels: function(element, fieldLayoutId)
+			applyLabels: function(element, fieldLayoutId, namespace)
 			{
 				if(fieldLayoutId === null || typeof fieldLayoutId === 'undefined')
 				{
@@ -172,8 +172,11 @@
 				var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
 				var $form = element ? $(element) : Craft.cp.$primaryForm;
 
-				var $namespace = $form.find('input[name="namespace"]');
-				var namespace = $namespace.val() ? $namespace.val() + '-' : '';
+				if(namespace === null || typeof namespace === 'undefined')
+				{
+					var $namespace = $form.find('input[name="namespace"]');
+					namespace = $namespace.val() ? $namespace.val() + '-' : '';
+				}
 
 				var elementEditor = $form.data('elementEditor');
 
