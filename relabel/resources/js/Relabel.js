@@ -50,7 +50,7 @@
 					{
 						FLD_init.apply(this, arguments);
 
-						new window.Relabel.Editor(this);
+						this.relabel = new window.Relabel.Editor(this);
 					};
 
 					FLD.prototype.initField = function($field)
