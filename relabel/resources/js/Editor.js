@@ -35,7 +35,16 @@
 			var fieldLayoutId = Relabel.getFieldLayoutId(this.$form);
 			if(fieldLayoutId !== false)
 			{
-				var initLabels = Relabel.getLabelsOnFieldLayout(fieldLayoutId);
+				this.applyLabels(fieldLayoutId)
+			}
+		},
+
+		applyLabels: function(fieldLayoutId)
+		{
+			var initLabels = Relabel.getLabelsOnFieldLayout(fieldLayoutId);
+
+			if(initLabels)
+			{
 				for(var labelId in initLabels) if(initLabels.hasOwnProperty(labelId))
 				{
 					var label = initLabels[labelId];
