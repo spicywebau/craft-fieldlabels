@@ -182,6 +182,14 @@ class RelabelPlugin extends BasePlugin
 		$globalSets = craft()->globals->getAllSets();
 		$entryTypes = EntryTypeModel::populateModels(EntryTypeRecord::model()->ordered()->findAll());
 		$tagGroups = craft()->tags->getAllTagGroups();
+
+		$commercePlugin = craft()->plugins->getPlugin('commerce');
+
+		if ($commercePlugin)
+		{
+			$productTypes = craft()->commerce_productTypes->getAllProductTypes();
+		}
+
 		//$userFields = FieldLayoutModel::populateModel(FieldLayoutRecord::model()->findByAttributes('type', ElementType::User));
 
 		$sections = craft()->sections->getAllSections();
@@ -199,6 +207,7 @@ class RelabelPlugin extends BasePlugin
 			'globalSet' => $this->_mapLayouts($globalSets),
 			'entryType' => $this->_mapLayouts($entryTypes),
 			'tagGroup' => $this->_mapLayouts($tagGroups),
+			'productType' => (isset($productTypes)) ? $this->_mapLayouts($productTypes) : [],
 			//'userFields' => $userFields->id,
 			'singleSection' => $singleSections,
 		);

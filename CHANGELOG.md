@@ -1,5 +1,8 @@
 ## Changelog
 
+#### v0.1.4
+- `Improved` Added support for Craft Commerce products
+
 #### v0.1.3
 - `Improved` Label names and instructions can now be translated
 - `Improved` Improved API for plugin use (now supports the Neo plugin)

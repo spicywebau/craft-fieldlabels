@@ -16,6 +16,8 @@
 			GLOBAL_SET:     'globalSet',
 			ENTRY:          'entry',
 			ENTRY_TYPE:     'entryType',
+			PRODUCT:        'product',
+			PRODUCT_TYPE:   'productType',
 			SINGLE_SECTION: 'singleSection',
 			TAG:            'tag',
 			TAG_GROUP:      'tagGroup',
@@ -171,6 +173,7 @@
 
 				var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
 				var $form = element ? $(element) : Craft.cp.$primaryForm;
+				var type = this.getContext($form);
 
 				if(namespace === null || typeof namespace === 'undefined')
 				{
@@ -184,42 +187,56 @@
 				{
 					var label = labels[labelId];
 					var field = this.getFieldInfo(label.fieldId);
-					var $field = $form.find('#' + namespace + 'fields-' + field.handle + '-field');
-					var $heading = $field.children('.heading');
-					var $label = $heading.children('label');
 
-					if(label.name)
+					if(type === this.PRODUCT)
 					{
-						$label.text(Craft.t(label.name));
+						// Hack to support product variants, since their ids are prepended by 'variants-new{id}'
+						var $fields = $form.find('[id$="fields-' + field.handle + '-field"]')
+					}
+					else
+					{
+						var $fields = $form.find('#' + namespace + 'fields-' + field.handle + '-field');
 					}
 
-					if(label.instructions)
-					{
-						if(elementEditor)
+					$fields.each(function(i) {
+						var $field = $(this);
+
+						var $heading = $field.children('.heading');
+						var $label = $heading.children('label');
+
+						if(label.name)
 						{
-							var $info = $heading.children('.info');
-
-							if($info.length === 0)
-							{
-								$info = $('<span class="info">').insertAfter($label);
-								$info.before('&nbsp;');
-							}
-
-							$info.text(Craft.t(label.instructions));
+							$label.text(Craft.t(label.name));
 						}
-						else
+
+						if(label.instructions)
 						{
-							var $instruct = $heading.find('.instructions > p');
-
-							if($instruct.length === 0)
+							if(elementEditor)
 							{
-								var $instructParent = $('<div class="instructions">').insertAfter($label);
-								$instruct = $('<p>').appendTo($instructParent);
-							}
+								var $info = $heading.children('.info');
 
-							$instruct.text(Craft.t(label.instructions));
+								if($info.length === 0)
+								{
+									$info = $('<span class="info">').insertAfter($label);
+									$info.before('&nbsp;');
+								}
+
+								$info.text(Craft.t(label.instructions));
+							}
+							else
+							{
+								var $instruct = $heading.find('.instructions > p');
+
+								if($instruct.length === 0)
+								{
+									var $instructParent = $('<div class="instructions">').insertAfter($label);
+									$instruct = $('<p>').appendTo($instructParent);
+								}
+
+								$instruct.text(Craft.t(label.instructions));
+							}
 						}
-					}
+					});
 				}
 			},
 
@@ -254,20 +271,22 @@
 					{
 						switch(action)
 						{
-							case 'assetSources/saveSource': return this.ASSET_SOURCE;
-							case 'categories/saveCategory': return this.CATEGORY;
-							case 'categories/saveGroup':    return this.CATEGORY_GROUP;
-							case 'globals/saveContent':     return this.GLOBAL;
-							case 'globals/saveSet':         return this.GLOBAL_SET;
+							case 'assetSources/saveSource':               return this.ASSET_SOURCE;
+							case 'categories/saveCategory':               return this.CATEGORY;
+							case 'categories/saveGroup':                  return this.CATEGORY_GROUP;
+							case 'globals/saveContent':                   return this.GLOBAL;
+							case 'globals/saveSet':                       return this.GLOBAL_SET;
 							case 'entries/saveEntry':
 							{
 								$entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
 								return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
 							}
-							case 'sections/saveEntryType':  return this.ENTRY_TYPE;
-							case 'tags/saveTagGroup':       return this.TAG_GROUP;
-							case 'users/users/saveUser':    return this.USER;
-							case 'users/saveFieldLayout':   return this.USER_FIELDS;
+							case 'sections/saveEntryType':                return this.ENTRY_TYPE;
+							case 'commerce/products/saveProduct':         return this.PRODUCT;
+							case 'commerce/productTypes/saveProductType': return this.PRODUCT_TYPE;
+							case 'tags/saveTagGroup':                     return this.TAG_GROUP;
+							case 'users/users/saveUser':                  return this.USER;
+							case 'users/saveFieldLayout':                 return this.USER_FIELDS;
 						}
 					}
 				}
@@ -314,6 +333,8 @@
 					case this.GLOBAL_SET:     selector = 'input[name="setId"]'; break;
 					case this.ENTRY:          selector = 'input[name="typeId"], #' + namespace + 'entryType'; break;
 					case this.ENTRY_TYPE:     selector = 'input[name="entryTypeId"]'; break;
+					case this.PRODUCT:        selector = 'input[name="typeId"]'; break;
+					case this.PRODUCT_TYPE:   selector = 'input[name="productTypeId"]'; break;
 					case this.SINGLE_SECTION: selector = 'input[name="sectionId"], #' + namespace + 'section'; break;
 					case this.TAG:            break;
 					case this.TAG_GROUP:      selector = 'input[name="tagGroupId"]'; break;
@@ -364,6 +385,8 @@
 							case this.GLOBAL_SET:     context = 'globalSet'; break;
 							case this.ENTRY:
 							case this.ENTRY_TYPE:     context = 'entryType'; break;
+							case this.PRODUCT:
+							case this.PRODUCT_TYPE:   context = 'productType'; break;
 							case this.SINGLE_SECTION: context = 'singleSection'; break;
 							case this.TAG:
 							case this.TAG_GROUP:      context = 'tagGroup'; break;
