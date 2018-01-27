@@ -190,7 +190,11 @@
 
 					if(label.name)
 					{
-						$label.text(Craft.t(label.name));
+						var $labelText = $label.contents().filter(function () {
+							return this.nodeType == 3;
+						}).first();
+
+						$labelText.replaceWith(document.createTextNode(Craft.t(label.name)));
 					}
 
 					if(label.instructions)
