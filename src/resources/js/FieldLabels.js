@@ -1,28 +1,34 @@
 (function($)
 {
-	var Relabel = {
+	var FieldLabels = {
 		setup: function() {}
 	};
 
 	if($ && window.Garnish && window.Craft)
 	{
-		Relabel = new (Garnish.Base.extend({
+		FieldLabels = new (Garnish.Base.extend({
 
-			ASSET:          'asset',
-			ASSET_SOURCE:   'assetSource',
-			CATEGORY:       'category',
-			CATEGORY_GROUP: 'categoryGroup',
-			GLOBAL:         'global',
-			GLOBAL_SET:     'globalSet',
-			ENTRY:          'entry',
-			ENTRY_TYPE:     'entryType',
-			SINGLE_SECTION: 'singleSection',
-			TAG:            'tag',
-			TAG_GROUP:      'tagGroup',
-			USER:           'user',
-			USER_FIELDS:    'userFields',
+			ASSET:                        'asset',
+			ASSET_VOLUME:                 'assetVolume',
+			CATEGORY:                     'category',
+			CATEGORY_GROUP:               'categoryGroup',
+			GLOBAL:                       'global',
+			GLOBAL_SET:                   'globalSet',
+			ENTRY:                        'entry',
+			ENTRY_TYPE:                   'entryType',
+			SINGLE_SECTION:               'singleSection',
+			TAG:                          'tag',
+			TAG_GROUP:                    'tagGroup',
+			USER:                         'user',
+			USER_FIELDS:                  'userFields',
+			COMMERCE_ORDER:               'commerceOrder',
+			COMMERCE_ORDER_FIELDS:        'commerceOrderFields',
+			COMMERCE_PRODUCT:             'commerceProduct',
+			COMMERCE_PRODUCT_TYPE:        'commerceProductType',
+			COMMERCE_SUBSCRIPTION:        'commerceSubscription',
+			COMMERCE_SUBSCRIPTION_FIELDS: 'commerceSubscriptionFields',
 
-			// These objects will be populated in the RelabelPlugin.php file
+			// These objects will be populated in the Plugin.php file
 			fields:  null,
 			labels:  null,
 			layouts: null,
@@ -44,13 +50,13 @@
 					var FLD_options = FLD.prototype.onFieldOptionSelect;
 
 					/**
-					 * Override the current FieldLayoutDesigner "constructor" so relabel can be initialised.
+					 * Override the current FieldLayoutDesigner "constructor" so Field Labels can be initialised.
 					 */
 					FLD.prototype.init = function()
 					{
 						FLD_init.apply(this, arguments);
 
-						this.relabel = new window.Relabel.Editor(this);
+						this.fieldlabels = new window.FieldLabels.Editor(this);
 					};
 
 					FLD.prototype.initField = function($field)
@@ -62,9 +68,9 @@
 						var menu = menuBtn.menu;
 						var $menu = menu.$container;
 						var $ul = $menu.children('ul');
-						var $relabel = $('<li><a data-action="relabel">' + Craft.t('Relabel') + '</a></li>').appendTo($ul);
+						var $fieldLabel = $('<li><a data-action="fieldlabels">' + Craft.t('fieldlabels', 'Relabel') + '</a></li>').appendTo($ul);
 
-						menu.addOptions($relabel.children('a'));
+						menu.addOptions($fieldLabel.children('a'));
 					};
 
 					FLD.prototype.onFieldOptionSelect = function(option)
@@ -77,9 +83,9 @@
 
 						switch(action)
 						{
-							case 'relabel':
+							case 'fieldlabels':
 							{
-								this.trigger('relabelOptionSelected', {
+								this.trigger('fieldLabelsOptionSelected', {
 									target:  $option[0],
 									$target: $option,
 									$field:  $field,
@@ -104,25 +110,25 @@
 
 						if($form && $form.length > 0)
 						{
-							window.Relabel.applyLabels($form)
+							window.FieldLabels.applyLabels($form)
 						}
 					}
 				}
 
-				if(Craft.ElementEditor)
+				if(Craft.BaseElementEditor)
 				{
-					var EE = Craft.ElementEditor;
+					var EE = Craft.BaseElementEditor;
 					var EE_show = EE.prototype.showHud;
 					var EE_update = EE.prototype.updateForm;
 
-					EE.prototype._relabelFLID = null;
+					EE.prototype._fieldLabelsFLID = null;
 
 					EE.prototype.loadHud = function()
 					{
 						this.onBeginLoading();
 						var data = this.getBaseData();
-						data.includeLocales = this.settings.showLocaleSwitcher;
-						Craft.postActionRequest('relabel/getEditorHtml', data, $.proxy(this, 'showHud'));
+						data.includeSites = this.settings.showSiteSwitcher;
+						Craft.postActionRequest('fieldlabels/actions/get-editor-html', data, $.proxy(this, 'showHud'));
 					};
 
 					EE.prototype.showHud = function(response, textStatus)
@@ -135,19 +141,19 @@
 
 							switch(response.elementType)
 							{
-								case window.Relabel.ASSET:    id = response.assetSourceId;   break;
-								case window.Relabel.CATEGORY: id = response.categoryGroupId; break;
-								case window.Relabel.ENTRY:    id = response.entryTypeId;     break;
-								case window.Relabel.TAG:      id = response.tagGroupId;      break;
+								case window.FieldLabels.ASSET:    id = response.volumeId;        break;
+								case window.FieldLabels.CATEGORY: id = response.categoryGroupId; break;
+								case window.FieldLabels.ENTRY:    id = response.entryTypeId;     break;
+								case window.FieldLabels.TAG:      id = response.tagGroupId;      break;
 							}
 
 							if(id !== false)
 							{
-								this._relabelFLID = window.Relabel.getFieldLayoutId(response.elementType, id);
+								this._fieldLabelsFLID = window.FieldLabels.getFieldLayoutId(response.elementType, id);
 							}
 						}
 
-						window.Relabel.applyLabels(this.hud.$hud, this._relabelFLID);
+						window.FieldLabels.applyLabels(this.hud.$hud, this._fieldLabelsFLID);
 					};
 
 					EE.prototype.updateForm = function()
@@ -156,7 +162,7 @@
 
 						if(this.hud)
 						{
-							window.Relabel.applyLabels(this.hud.$hud, this._relabelFLID);
+							window.FieldLabels.applyLabels(this.hud.$hud, this._fieldLabelsFLID);
 						}
 					}
 				}
@@ -167,6 +173,13 @@
 				if(fieldLayoutId === null || typeof fieldLayoutId === 'undefined')
 				{
 					fieldLayoutId = this.getFieldLayoutId(element);
+				}
+
+				if(Array.isArray(fieldLayoutId))
+				{
+					// This is a Commerce product type, we need to apply the variant labels too
+					this.applyLabels(element, fieldLayoutId[1], 'variants-');
+					fieldLayoutId = fieldLayoutId[0];
 				}
 
 				var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
@@ -184,13 +197,24 @@
 				{
 					var label = labels[labelId];
 					var field = this.getFieldInfo(label.fieldId);
-					var $field = $form.find('#' + namespace + 'fields-' + field.handle + '-field');
+					var $field;
+
+					// Get Commerce variant fields, since their field IDs include the variant IDs
+					if(namespace !== 'variants-')
+					{
+						$field = $form.find('#' + namespace + 'fields-' + field.handle + '-field');
+					}
+					else
+					{
+						$field = $form.find('[id^="' + namespace + '"][id$="fields-' + field.handle + '-field"]');
+					}
+
 					var $heading = $field.children('.heading');
 					var $label = $heading.children('label');
 
 					if(label.name)
 					{
-						$label.text(Craft.t(label.name));
+						$label.text(Craft.t('fieldlabels', label.name));
 					}
 
 					if(label.instructions)
@@ -205,19 +229,23 @@
 								$info.before('&nbsp;');
 							}
 
-							$info.text(Craft.t(label.instructions));
+							$info.text(Craft.t('fieldlabels', label.instructions));
 						}
 						else
 						{
-							var $instruct = $heading.find('.instructions > p');
-
-							if($instruct.length === 0)
-							{
-								var $instructParent = $('<div class="instructions">').insertAfter($label);
-								$instruct = $('<p>').appendTo($instructParent);
-							}
-
-							$instruct.text(Craft.t(label.instructions));
+							// Apply to each heading for cases where there's more than one (looking at you, variants)
+							$heading.each(function() {
+								var $this = $(this);
+								var $instruct = $this.find('.instructions > p');
+	
+								if($instruct.length === 0)
+								{
+									var $instructParent = $('<div class="instructions">').insertAfter($this.children('label'));
+									$instruct = $('<p>').appendTo($instructParent);
+								}
+	
+								$instruct.text(Craft.t('fieldlabels', label.instructions));
+							});
 						}
 					}
 				}
@@ -254,20 +282,26 @@
 					{
 						switch(action)
 						{
-							case 'assetSources/saveSource': return this.ASSET_SOURCE;
-							case 'categories/saveCategory': return this.CATEGORY;
-							case 'categories/saveGroup':    return this.CATEGORY_GROUP;
-							case 'globals/saveContent':     return this.GLOBAL;
-							case 'globals/saveSet':         return this.GLOBAL_SET;
-							case 'entries/saveEntry':
+							case 'volumes/save-volume':      return this.ASSET_VOLUME;
+							case 'categories/save-category': return this.CATEGORY;
+							case 'categories/save-group':    return this.CATEGORY_GROUP;
+							case 'globals/save-content':     return this.GLOBAL;
+							case 'globals/save-set':         return this.GLOBAL_SET;
+							case 'entries/save-entry':
 							{
 								$entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
 								return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
 							}
-							case 'sections/saveEntryType':  return this.ENTRY_TYPE;
-							case 'tags/saveTagGroup':       return this.TAG_GROUP;
-							case 'users/users/saveUser':    return this.USER;
-							case 'users/saveFieldLayout':   return this.USER_FIELDS;
+							case 'sections/save-entry-type': return this.ENTRY_TYPE;
+							case 'tags/save-tag-group':      return this.TAG_GROUP;
+							case 'users/save-user':          return this.USER;
+							case 'users/save-field-layout':  return this.USER_FIELDS;
+
+							// Craft Commerce actions
+							case 'commerce/order-settings/save':                     return this.COMMERCE_ORDER_FIELDS;
+							case 'commerce/products/save-product':                   return this.COMMERCE_PRODUCT;
+							case 'commerce/product-types/save-product-type':         return this.COMMERCE_PRODUCT_TYPE;
+							case 'commerce/settings/save-subscription-field-layout': return this.COMMERCE_SUBSCRIPTION_FIELDS;
 						}
 					}
 				}
@@ -307,7 +341,7 @@
 				switch(type)
 				{
 					case this.ASSET:          break;
-					case this.ASSET_SOURCE:   selector = 'input[name="sourceId"]'; break;
+					case this.ASSET_VOLUME:   selector = 'input[name="volumeId"]'; break;
 					case this.CATEGORY:       selector = 'input[name="groupId"]'; break;
 					case this.CATEGORY_GROUP: selector = 'input[name="groupId"]'; break;
 					case this.GLOBAL:         selector = 'input[name="setId"]'; break;
@@ -317,6 +351,8 @@
 					case this.SINGLE_SECTION: selector = 'input[name="sectionId"], #' + namespace + 'section'; break;
 					case this.TAG:            break;
 					case this.TAG_GROUP:      selector = 'input[name="tagGroupId"]'; break;
+					case this.COMMERCE_PRODUCT: selector = 'input[name="typeId"]'; break;
+					case this.COMMERCE_PRODUCT_TYPE: selector = 'input[name="productTypeId"]'; break;
 				}
 
 				var $input = $form.find(selector);
@@ -345,31 +381,49 @@
 					}
 				}
 
-
 				if(contextId !== false)
 				{
-					if(context === this.USER_FIELDS)
+					switch(context)
 					{
-						return this.layouts[context] | 0;
-					}
-					else
-					{
-						switch(context)
+						case this.ASSET:
+						case this.ASSET_VOLUME:   context = this.ASSET_VOLUME; break;
+						case this.CATEGORY:
+						case this.CATEGORY_GROUP: context = this.CATEGORY_GROUP; break;
+						case this.GLOBAL:
+						case this.GLOBAL_SET:     context = this.GLOBAL_SET; break;
+						case this.ENTRY:
+						case this.ENTRY_TYPE:     context = this.ENTRY_TYPE; break;
+						case this.SINGLE_SECTION: context = this.SINGLE_SECTION; break;
+						case this.TAG:
+						case this.TAG_GROUP:      context = this.TAG_GROUP; break;
+						case this.COMMERCE_PRODUCT:
+						case this.COMMERCE_PRODUCT_TYPE:
 						{
-							case this.ASSET:
-							case this.ASSET_SOURCE:   context = 'assetSource'; break;
-							case this.CATEGORY:
-							case this.CATEGORY_GROUP: context = 'categoryGroup'; break;
-							case this.GLOBAL:
-							case this.GLOBAL_SET:     context = 'globalSet'; break;
-							case this.ENTRY:
-							case this.ENTRY_TYPE:     context = 'entryType'; break;
-							case this.SINGLE_SECTION: context = 'singleSection'; break;
-							case this.TAG:
-							case this.TAG_GROUP:      context = 'tagGroup'; break;
+							context = this.COMMERCE_PRODUCT_TYPE;
+							return [
+								this.layouts[context][contextId]['productType'] | 0,
+								this.layouts[context][contextId]['variant'] | 0,
+							];
 						}
+					}
 
-						return this.layouts[context][contextId] | 0;
+					return this.layouts[context][contextId] | 0;
+				} else {
+					switch(context)
+					{
+						case this.USER:
+						case this.USER_FIELDS:                  context = this.USER_FIELDS; break;
+						case this.COMMERCE_ORDER:
+						case this.COMMERCE_ORDER_FIELDS:        context = this.COMMERCE_ORDER_FIELDS; break;
+						case this.COMMERCE_SUBSCRIPTION:
+						case this.COMMERCE_SUBSCRIPTION_FIELDS: context = this.COMMERCE_SUBSCRIPTION_FIELDS; break;
+					}
+
+					if (typeof this.layouts[context] !== 'undefined') {
+						// If the context exists but a specific context ID couldn't be found, then it's a fixed field
+						// layout, such as a user or Commerce order.  In these cases, we can just return
+						// `this.layouts[context]` since it'll have the layout ID we need.
+						return this.layouts[context];
 					}
 				}
 
@@ -422,6 +476,6 @@
 		}))();
 	}
 
-	window.Relabel = Relabel;
+	window.FieldLabels = FieldLabels;
 
 })(window.jQuery);

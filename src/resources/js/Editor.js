@@ -13,7 +13,7 @@
 		fld: null,
 		labels: null,
 
-		namespace: 'relabel',
+		namespace: 'fieldlabels',
 
 		$form: null,
 
@@ -21,27 +21,35 @@
 		{
 			if(!(fld instanceof Craft.FieldLayoutDesigner))
 			{
-				// Fail silently - just means the relabel feature will not be initialised, no big deal
+				// Fail silently - just means the Field Labels feature will not be initialised, no big deal
 				return;
 			}
 
 			this.fld = fld;
-			this.fld.on('relabelOptionSelected', $.proxy(this.openModal, this));
+			this.fld.on('fieldLabelsOptionSelected', $.proxy(this.openModal, this));
 
 			this.$form = this.fld.$container.closest('form');
 
 			this.labels = {};
 
-			var fieldLayoutId = Relabel.getFieldLayoutId(this.$form);
-			if(fieldLayoutId !== false)
+			var fieldLayoutId = FieldLabels.getFieldLayoutId(this.$form);
+
+			if(Array.isArray(fieldLayoutId))
 			{
-				this.applyLabels(fieldLayoutId)
+				// Commerce!
+				var i = this.fld.$container.attr('id').split('-')[0] !== 'variant' ? 0 : 1;
+				this.namespace = 'fieldlabels-commerce[' + fieldLayoutId[i] + ']';
+				this.applyLabels(fieldLayoutId[i]);
+			}
+			else if(fieldLayoutId !== false)
+			{
+				this.applyLabels(fieldLayoutId);
 			}
 		},
 
 		applyLabels: function(fieldLayoutId)
 		{
-			var initLabels = Relabel.getLabelsOnFieldLayout(fieldLayoutId);
+			var initLabels = FieldLabels.getLabelsOnFieldLayout(fieldLayoutId);
 
 			if(initLabels)
 			{
@@ -57,7 +65,7 @@
 		{
 			var fieldId = e.id;
 
-			var info = Relabel.getFieldInfo(fieldId);
+			var info = FieldLabels.getFieldInfo(fieldId);
 			var origName     = info && typeof info.name         === 'string' ? info.name         : '';
 			var origInstruct = info && typeof info.instructions === 'string' ? info.instructions : '';
 
@@ -92,7 +100,7 @@
 
 			var hasLabel = !!(name || instruct);
 
-			$field.toggleClass('relabelled', hasLabel);
+			$field.toggleClass('fieldlabelled', hasLabel);
 
 			if(hasLabel)
 			{
@@ -108,6 +116,6 @@
 		}
 	});
 
-	Relabel.Editor = Editor;
+	FieldLabels.Editor = Editor;
 
 })(window.jQuery);

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1000.1 1000.1" style="enable-background:new 0 0 1000.1 1000.1;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#ED1C24;}
+	.st1{fill:url(#SVGID_1_);}
+</style>
+<polygon class="st0" points="247.2,2.3 246.6,2.3 247.2,3 "/>
+<g>
+	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="501" y1="1000" x2="501" y2="-8.7725">
+			<stop  offset="4.734860e-02" style="stop-color:#FFFFFF"/>
+			<stop  offset="0.1531" style="stop-color:#ECECEC;stop-opacity:0.58"/>
+			<stop  offset="0.2395" style="stop-color:#CFCFCF;stop-opacity:0.6229"/>
+			<stop  offset="0.5192" style="stop-color:#787878;stop-opacity:0.762"/>
+			<stop  offset="0.7475" style="stop-color:#373737;stop-opacity:0.8754"/>
+			<stop  offset="0.9127" style="stop-color:#0F0F0F;stop-opacity:0.9575"/>
+			<stop  offset="0.9982" style="stop-color:#000000"/>
+		</linearGradient>
+		<path class="st1" d="M501,0H1v500l500,500l500-500L501,0z M376,375H126V125h250V375z"/>
+	</g>
+</g>
+</svg>
