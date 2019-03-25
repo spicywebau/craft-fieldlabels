@@ -1,8 +1,11 @@
+<img src="src/icon.svg" width="100">
+
 # Field Labels
 
 A Craft CMS plugin that allows overriding field labels and instructions for individual entry and element types in the field layout designer.
 This is useful for when you want to tailor the name or instructions of a field to a particular area, without having to
 create another (essentially identical) field.
+
 Field Labels supports overriding field labels on all Craft CMS and Craft Commerce element types.
 
 *Note: This is the plugin originally released for Craft 2 as Relabel.*
