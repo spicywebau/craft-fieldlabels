@@ -62,9 +62,10 @@ class Plugin extends BasePlugin
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $this->_includeResources();
-                $this->_bindEvent();
             }
         );
+
+        $this->_bindEvent();
 
 		Craft::$app->getProjectConfig()
             ->onAdd('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel'])
