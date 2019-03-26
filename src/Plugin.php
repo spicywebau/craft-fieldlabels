@@ -8,6 +8,8 @@ use craft\base\Plugin as BasePlugin;
 use craft\db\Query;
 use craft\db\Table;
 use craft\elements\User;
+use craft\web\UrlManager;
+use craft\events\RegisterUrlRulesEvent;
 use craft\models\EntryType;
 use craft\services\Fields;
 
@@ -55,7 +57,14 @@ class Plugin extends BasePlugin
             'methods' => Service::class,
         ]);
 
-        $this->_includeResources();
+        Event::on(
+            UrlManager::class,
+            UrlManager::EVENT_REGISTER_CP_URL_RULES,
+            function (RegisterUrlRulesEvent $event) {
+                $this->_includeResources();
+            }
+        );
+
         $this->_bindEvent();
 
 		Craft::$app->getProjectConfig()
