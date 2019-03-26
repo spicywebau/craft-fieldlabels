@@ -298,6 +298,7 @@
 							case 'users/save-field-layout':  return this.USER_FIELDS;
 
 							// Craft Commerce actions
+							case 'commerce/orders/save-order':                       return this.COMMERCE_ORDER;
 							case 'commerce/order-settings/save':                     return this.COMMERCE_ORDER_FIELDS;
 							case 'commerce/products/save-product':                   return this.COMMERCE_PRODUCT;
 							case 'commerce/product-types/save-product-type':         return this.COMMERCE_PRODUCT_TYPE;
