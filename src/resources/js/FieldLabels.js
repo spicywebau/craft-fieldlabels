@@ -288,6 +288,7 @@
 							case 'globals/save-content':     return this.GLOBAL;
 							case 'globals/save-set':         return this.GLOBAL_SET;
 							case 'entries/save-entry':
+							case 'entry-revisions/save-draft':
 							{
 								$entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
 								return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
