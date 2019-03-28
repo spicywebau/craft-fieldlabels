@@ -65,9 +65,15 @@ class Plugin extends BasePlugin
             }
         );
 
-        $this->_bindEvent();
+        $projectConfigService = Craft::$app->getProjectConfig();
+        $request = Craft::$app->getRequest();
 
-		Craft::$app->getProjectConfig()
+        // Don't try to bind to the layout save event if this is a console request or a project.yaml sync
+        if (!($projectConfigService->getIsApplyingYamlChanges() || $request->getIsConsoleRequest())) {
+            $this->_bindEvent();
+        }
+
+        $projectConfigService
             ->onAdd('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel'])
             ->onUpdate('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel']);
     }
