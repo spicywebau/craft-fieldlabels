@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.3 - 2019-03-28
+### Fixed
+- Fixed error when trying to perform a project config sync from a terminal
+- Fixed potential error if a section has no entry types
+
 ## 1.0.2 - 2019-03-27
 ### Fixed
 - Fixed issue with field labels not being applied to entry drafts
