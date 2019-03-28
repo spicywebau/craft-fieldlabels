@@ -194,8 +194,11 @@ class Plugin extends BasePlugin
         $singleSections = [];
 
         foreach ($sections as $section) {
-            $entryType = $section->getEntryTypes()[0];
-            $singleSections[$section->id] = (int)$entryType->fieldLayoutId;
+            $entryType = $section->getEntryTypes();
+
+            if (count($entryType) > 0) {
+                $singleSections[$section->id] = (int)$entryType[0]->fieldLayoutId;
+            }
         }
 
         $layouts = [
