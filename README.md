@@ -29,7 +29,7 @@ composer require spicyweb/craft-fieldlabels
 Then open your project's control panel, navigate to Settings &rarr; Plugins, find Field Labels and click Install.
 
 ### Upgrading from Relabel for Craft 2
-A Craft 3 installation migrated from Craft 2, which had Relabel for Craft 2 installed, will have its previous Relabel data automatically migrated on installation of Field Labels.
+When installing Field Labels on a Craft 3 project that was upgraded from Craft 2 and had Relabel for Craft 2 installed, the previous Relabel data will automatically be migrated for use with Field Labels.
 
 ## Screenshots
 
