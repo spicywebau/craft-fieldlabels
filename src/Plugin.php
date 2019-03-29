@@ -164,6 +164,7 @@ class Plugin extends BasePlugin
     private function _getLayouts(): array
     {
         $fieldsService = Craft::$app->getFields();
+        $pluginsService = Craft::$app->getPlugins();
         $assetVolumes = Craft::$app->getVolumes()->getAllVolumes();
         $categoryGroups = Craft::$app->getCategories()->getAllGroups();
         $globalSets = Craft::$app->getGlobals()->getAllSets();
@@ -215,9 +216,7 @@ class Plugin extends BasePlugin
         }
 
         // Craft Commerce support
-        if (class_exists('\craft\commerce\Plugin')) {
-            $commerce = \craft\commerce\Plugin::getInstance();
-
+        if (($commerce = $pluginsService->getPlugin('commerce')) !== null) {
             // Products, variants
             $layouts['commerceProductType'] = $this->_mapCommerceLayouts($commerce->getProductTypes()->getAllProductTypes());
 
