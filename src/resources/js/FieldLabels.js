@@ -21,12 +21,18 @@
 			TAG_GROUP:                    'tagGroup',
 			USER:                         'user',
 			USER_FIELDS:                  'userFields',
+
+			// Craft Commerce
 			COMMERCE_ORDER:               'commerceOrder',
 			COMMERCE_ORDER_FIELDS:        'commerceOrderFields',
 			COMMERCE_PRODUCT:             'commerceProduct',
 			COMMERCE_PRODUCT_TYPE:        'commerceProductType',
 			COMMERCE_SUBSCRIPTION:        'commerceSubscription',
 			COMMERCE_SUBSCRIPTION_FIELDS: 'commerceSubscriptionFields',
+
+			// Solspace Calendar
+			CALENDAR:                     'calendar',
+			CALENDAR_EVENT:               'calendarEvent',
 
 			// These objects will be populated in the Plugin.php file
 			fields:  null,
@@ -319,6 +325,10 @@
 							case 'commerce/products/save-product':                   return this.COMMERCE_PRODUCT;
 							case 'commerce/product-types/save-product-type':         return this.COMMERCE_PRODUCT_TYPE;
 							case 'commerce/settings/save-subscription-field-layout': return this.COMMERCE_SUBSCRIPTION_FIELDS;
+
+							// Solspace Calendar actions
+							case 'calendar/calendars/save-calendar': return this.CALENDAR;
+							case 'calendar/events/save-event':       return this.CALENDAR_EVENT;
 						}
 					}
 				}
@@ -370,6 +380,8 @@
 					case this.TAG_GROUP:      selector = 'input[name="tagGroupId"]'; break;
 					case this.COMMERCE_PRODUCT: selector = 'input[name="typeId"]'; break;
 					case this.COMMERCE_PRODUCT_TYPE: selector = 'input[name="productTypeId"]'; break;
+					case this.CALENDAR:       selector = 'input[name="calendarId"]'; break;
+					case this.CALENDAR_EVENT: selector = 'input[name="calendarEvent[calendarId]"]'; break;
 				}
 
 				var $input = $form.find(selector);
@@ -422,6 +434,8 @@
 								this.layouts[context][contextId]['variant'] | 0,
 							];
 						}
+						case this.CALENDAR:
+						case this.CALENDAR_EVENT: context = this.CALENDAR; break;
 					}
 
 					return this.layouts[context][contextId] | 0;

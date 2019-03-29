@@ -10,6 +10,7 @@ use craft\db\Table;
 use craft\elements\User;
 use craft\web\UrlManager;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\StringHelper;
 use craft\models\EntryType;
 use craft\services\Fields;
 
@@ -215,25 +216,51 @@ class Plugin extends BasePlugin
             $layouts['userFields'] = (int)$userFields->id;
         }
 
-        // Craft Commerce support
-        if (($commerce = $pluginsService->getPlugin('commerce')) !== null) {
-            // Products, variants
-            $layouts['commerceProductType'] = $this->_mapCommerceLayouts($commerce->getProductTypes()->getAllProductTypes());
-
-            // Order field layout
-            $orderLayout = $fieldsService->getLayoutByType(\craft\commerce\elements\Order::class);
-
-            if ($orderLayout !== null) {
-                $layouts['commerceOrderFields'] = (int)$orderLayout->id;
-            }
-
-            // Subscription field layout
-            $subscriptionLayout = $fieldsService->getLayoutByType(\craft\commerce\elements\Subscription::class);
-
-            if ($subscriptionLayout !== null) {
-                $layouts['commerceSubscriptionFields'] = (int)$subscriptionLayout->id;
+        // Plugin support
+        foreach (['commerce', 'calendar'] as $pluginHandle) {
+            if ($pluginsService->isPluginInstalled($pluginHandle)) {
+                $method = '_get' . StringHelper::toCamelCase($pluginHandle) . 'Layouts';
+                $layouts = array_merge($layouts, $this->$method());
             }
         }
+
+        return $layouts;
+    }
+
+    private function _getCommerceLayouts(): array
+    {
+        $fieldsService = Craft::$app->getFields();
+        $commercePlugin = Craft::$app->getPlugins()->getPlugin('commerce');
+        $productTypes = $commercePlugin->getProductTypes()->getAllProductTypes();
+        $layouts = [];
+
+        // Products, variants
+        $layouts['commerceProductType'] = $this->_mapCommerceLayouts($productTypes);
+
+        // Order field layout
+        $orderLayout = $fieldsService->getLayoutByType(\craft\commerce\elements\Order::class);
+
+        if ($orderLayout !== null) {
+            $layouts['commerceOrderFields'] = (int)$orderLayout->id;
+        }
+
+        // Subscription field layout
+        $subscriptionLayout = $fieldsService->getLayoutByType(\craft\commerce\elements\Subscription::class);
+
+        if ($subscriptionLayout !== null) {
+            $layouts['commerceSubscriptionFields'] = (int)$subscriptionLayout->id;
+        }
+
+        return $layouts;
+    }
+
+    private function _getCalendarLayouts(): array
+    {
+        $calendarPlugin = Craft::$app->getPlugins()->getPlugin('calendar');
+        $calendars = $calendarPlugin->calendars->getAllCalendars();
+        $layouts = [
+            'calendar' => $this->_mapLayouts($calendars),
+        ];
 
         return $layouts;
     }

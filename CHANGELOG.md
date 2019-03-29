@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added support for the Solspace Calendar plugin
+
 ## 1.0.4 - 2019-03-29
 ### Fixed
 - Fixed error that occurred when attempting to create a new element from an element field's modal
