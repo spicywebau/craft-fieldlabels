@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.5 - 2019-03-29
 ### Added
 - Added support for the Solspace Calendar plugin
 
