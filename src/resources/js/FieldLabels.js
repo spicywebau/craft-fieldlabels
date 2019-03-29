@@ -170,9 +170,25 @@
 
 			applyLabels: function(element, fieldLayoutId, namespace)
 			{
+				var enforceElementEditor = false;
+				var $form = element ? $(element) : Craft.cp.$primaryForm;
+
 				if(fieldLayoutId === null || typeof fieldLayoutId === 'undefined')
 				{
 					fieldLayoutId = this.getFieldLayoutId(element);
+				}
+
+				// New element modals won't have found the field layout ID by the above method, but it will be found in
+				// a hidden input
+				if(!fieldLayoutId && element)
+				{
+					$layoutIdInput = $(arguments[0]).find('input[name*="[fieldLayoutId]"]');
+
+					if($layoutIdInput.length === 1)
+					{
+						fieldLayoutId = $layoutIdInput.val();
+						enforceElementEditor = true;
+					}
 				}
 
 				if(Array.isArray(fieldLayoutId))
@@ -183,7 +199,6 @@
 				}
 
 				var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
-				var $form = element ? $(element) : Craft.cp.$primaryForm;
 
 				if(namespace === null || typeof namespace === 'undefined')
 				{
@@ -219,7 +234,7 @@
 
 					if(label.instructions)
 					{
-						if(elementEditor)
+						if(elementEditor || enforceElementEditor)
 						{
 							var $info = $heading.children('.info');
 

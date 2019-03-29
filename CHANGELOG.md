@@ -2,6 +2,7 @@
 
 ## Unreleased
 ### Fixed
+- Fixed error that occurred when attempting to create a new element from an element field's modal
 - Fixed error that occurred if Craft Commerce was required by a Craft project but not installed
 
 ## 1.0.3 - 2019-03-28

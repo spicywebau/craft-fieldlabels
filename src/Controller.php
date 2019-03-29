@@ -37,15 +37,15 @@ class Controller extends BaseController
             $element = $elementsService->getElementById($elementId, $elementType);
         }
 
-        if ($element !== null) {
-            // Get Craft's element editor data so we can send it back with extra data that Field Labels needs
-            $response = Craft::$app->runAction(
-                'elements/get-editor-html',
-                [
-                    'includeSites' => $includeSites,
-                ]
-            );
+        // Get Craft's element editor data so we can send it back with extra data that Field Labels needs
+        $response = Craft::$app->runAction(
+            'elements/get-editor-html',
+            [
+                'includeSites' => $includeSites,
+            ]
+        );
 
+        if ($element !== null) {
             $data = $response->data;
 
             switch ($elementType) {
@@ -70,8 +70,10 @@ class Controller extends BaseController
                     $data['tagGroupId'] = $element->groupId;
                     break;
             }
+
+            return $this->asJson($data);
         }
 
-        return $this->asJson($data);
+        return $response;
     }
 }
