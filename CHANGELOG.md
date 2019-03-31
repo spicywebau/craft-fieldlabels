@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added support for the project config rebuild functionality introduced in Craft CMS 3.1.20
+
+### Changed
+- Field Labels now requires Craft CMS 3.1.20 or later
+
 ## 1.0.5 - 2019-03-29
 ### Added
 - Added support for the Solspace Calendar plugin

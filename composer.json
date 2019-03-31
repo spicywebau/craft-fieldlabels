@@ -20,7 +20,7 @@
     "issues": "https://github.com/spicywebau/craft-fieldlabels/issues"
   },
   "require": {
-    "craftcms/cms": "^3.1.0"
+    "craftcms/cms": "^3.1.20"
   },
   "autoload": {
     "psr-4": {

@@ -8,14 +8,16 @@ use craft\base\Plugin as BasePlugin;
 use craft\db\Query;
 use craft\db\Table;
 use craft\elements\User;
-use craft\web\UrlManager;
+use craft\events\RebuildConfigEvent;
 use craft\events\RegisterUrlRulesEvent;
 use craft\helpers\StringHelper;
 use craft\models\EntryType;
 use craft\services\Fields;
+use craft\services\ProjectConfig;
+use craft\web\UrlManager;
 
-use spicyweb\fieldlabels\assets\Main as MainAsset;
 use spicyweb\fieldlabels\assets\Editor as EditorAsset;
+use spicyweb\fieldlabels\assets\Main as MainAsset;
 use spicyweb\fieldlabels\models\FieldLabel as FieldLabelModel;
 
 /**
@@ -74,9 +76,8 @@ class Plugin extends BasePlugin
             $this->_bindEvent();
         }
 
-        $projectConfigService
-            ->onAdd('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel'])
-            ->onUpdate('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel']);
+        // Setup project config functionality
+        $this->_setupProjectConfig();
     }
 
     private function _includeResources()
@@ -124,6 +125,41 @@ class Plugin extends BasePlugin
             // Make sure these labels don't get saved more than once
             unset($_POST['fieldlabels']);
             unset($_POST['fieldlabels-commerce[' . $layout->id . ']']);
+        });
+    }
+
+    private function _setupProjectConfig()
+    {
+        // Listen for Field Labels updates in the project config to apply them to the database
+        Craft::$app->getProjectConfig()
+            ->onAdd('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel'])
+            ->onUpdate('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel']);
+
+        // Listen for a project config rebuild, and provide the Field Labels data from the database
+        Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $event) {
+            $data = [];
+            $query = (new Query)
+                ->select([
+                    'fl.name',
+                    'fl.instructions',
+                    'fl.uid',
+                    'fields.uid AS field',
+                    'layouts.uid AS fieldLayout'
+                ])
+                ->from('{{%fieldlabels}} fl')
+                ->innerJoin('{{%fields}} fields', '[[fl.fieldId]] = [[fields.id]]')
+                ->innerJoin('{{%fieldlayouts}} layouts', '[[fl.fieldLayoutId]] = [[layouts.id]]');
+
+            foreach ($query->all() as $label) {
+                $data[$label['uid']] = [
+                    'field' => $label['field'],
+                    'fieldLayout' => $label['fieldLayout'],
+                    'name' => $label['name'],
+                    'instructions' => $label['instructions'],
+                ];
+            }
+
+            $event->config['fieldlabels'] = $data;
         });
     }
 
