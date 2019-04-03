@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7 - 2019-04-03
+### Fixed
+- Fixed issue on multi-site Craft installations where applying a field label to a translatable field would remove the translatable icon
+
 ## 1.0.6 - 2019-04-03
 ### Added
 - Added support for the project config rebuild functionality introduced in Craft CMS 3.1.20
