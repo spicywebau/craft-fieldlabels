@@ -38,7 +38,7 @@
 							'<div class="instructions"><p>', Craft.t('fieldlabels', 'What this field will be reinstructed in the CP.'), '</p></div>',
 						'</div>',
 						'<div class="input">',
-							'<input id="fieldlabels-instruct-field" type="text" class="text fullwidth">',
+							'<textarea id="fieldlabels-instruct-field" type="text" class="text fullwidth" rows="4"></textarea>',
 							'<ul id="fieldlabels-instruct-errors" class="errors" style="display: none;"></ul>',
 						'</div>',
 					'</div>',

@@ -6,6 +6,7 @@
 
 ### Changed
 - Field Labels now requires Craft CMS 3.1.20 or later
+- Changed the Field Labels instructions input to a textarea, for consistency with Craft's presentation of instructions on a field settings page
 
 ## 1.0.5 - 2019-03-29
 ### Added
