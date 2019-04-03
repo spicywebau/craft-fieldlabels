@@ -257,15 +257,15 @@
 							// Apply to each heading for cases where there's more than one (looking at you, variants)
 							$heading.each(function() {
 								var $this = $(this);
-								var $instruct = $this.find('.instructions > p');
+								var $instructParent = $this.find('.instructions');
+								var instructions = Craft.t('fieldlabels', label.instructions)
 	
-								if($instruct.length === 0)
+								if($instructParent.length === 0)
 								{
-									var $instructParent = $('<div class="instructions">').insertAfter($this.children('label'));
-									$instruct = $('<p>').appendTo($instructParent);
+									$instructParent = $('<div class="instructions">').insertAfter($this.children('label'));
 								}
-	
-								$instruct.text(Craft.t('fieldlabels', label.instructions));
+
+								$instructParent.html(window.FieldLabels._getInstructionsHtml(instructions));
 							});
 						}
 					}
@@ -503,6 +503,42 @@
 				}
 
 				return labels;
+			},
+
+			_getInstructionsHtml: function(instructions)
+			{
+				var lines = instructions.split(/\r?\n/);
+				var html = '';
+				var newParagraph = true;
+	
+				for(var i in lines)
+				{
+					var line = lines[i];
+
+					if(newParagraph)
+					{
+						newParagraph = false;
+						html += '<p>';
+					}
+					else if(line === '')
+					{
+						newParagraph = true;
+						html += '</p>';
+					}
+					else
+					{
+						html += '<br>';
+					}
+
+					html += line;
+
+					if(i == lines.length - 1)
+					{
+						html += '</p>';
+					}
+				}
+
+				return html;
 			}
 		}))();
 	}

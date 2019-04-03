@@ -8,6 +8,9 @@
 - Field Labels now requires Craft CMS 3.1.20 or later
 - Changed the Field Labels instructions input to a textarea, for consistency with Craft's presentation of instructions on a field settings page
 
+### Fixed
+- Fixed issue where a Field Labels instruction could duplicate if the field instruction it replaced was multi-line
+
 ## 1.0.5 - 2019-03-29
 ### Added
 - Added support for the Solspace Calendar plugin
