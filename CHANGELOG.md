@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.6 - 2019-04-03
 ### Added
 - Added support for the project config rebuild functionality introduced in Craft CMS 3.1.20
 
