@@ -6,7 +6,11 @@ A Craft CMS plugin that allows overriding field labels and instructions for indi
 This is useful for when you want to tailor the name or instructions of a field to a particular area, without having to
 create another (essentially identical) field.
 
-Field Labels supports overriding field labels on all Craft CMS and Craft Commerce element types.
+Field Labels supports overriding the names and instructions on any custom fields used with:
+- Craft CMS's in-built sections/entry types, category groups, global sets, users, assets/volumes and tag groups
+- Craft Commerce product types, variants, orders and subscriptions
+- [Neo](https://github.com/spicywebau/craft-neo) fields
+- [Solspace Calendar](https://github.com/solspace/craft3-calendar) events
 
 *Note: This is the plugin originally released for Craft 2 as Relabel.*
 
