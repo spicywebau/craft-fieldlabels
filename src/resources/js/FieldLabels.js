@@ -264,20 +264,25 @@
 						{
 							// Apply to each heading for cases where there's more than one (looking at you, variants)
 							$heading.each(function() {
-								var $this = $(this);
-								var $instructParent = $this.find('.instructions');
-								var instructions = Craft.t('fieldlabels', label.instructions)
-	
-								if($instructParent.length === 0)
-								{
-									$instructParent = $('<div class="instructions">').insertAfter($this.children('label'));
-								}
-
-								$instructParent.html(window.FieldLabels._getInstructionsHtml(instructions));
+								window.FieldLabels.applyInstructions($(this), label.instructions);
 							});
 						}
 					}
 				}
+			},
+
+			applyInstructions: function(heading, instructions)
+			{
+				var $heading = $(heading);
+				var $instructParent = $heading.find('.instructions');
+				var instructions = Craft.t('fieldlabels', instructions)
+
+				if($instructParent.length === 0)
+				{
+					$instructParent = $('<div class="instructions">').insertAfter($heading.children('label'));
+				}
+
+				$instructParent.html(window.FieldLabels._getInstructionsHtml(instructions));
 			},
 
 			getContext: function(element)
