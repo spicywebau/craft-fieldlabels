@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 - 2019-05-09
+### Added
+- Add quick post widgets support - thanks @ttempleton
+
+### Changed
+- check to see if plugin is enabled as well as installed - thanks @samuelbirch
+- Convert instructions from varchar(255) to text - thanks @ttempleton
+
 ## 1.0.7 - 2019-04-03
 ### Fixed
 - Fixed issue on multi-site Craft installations where applying a field label to a translatable field would remove the translatable icon
