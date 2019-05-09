@@ -18,6 +18,7 @@ use craft\web\UrlManager;
 
 use spicyweb\fieldlabels\assets\Editor as EditorAsset;
 use spicyweb\fieldlabels\assets\Main as MainAsset;
+use spicyweb\fieldlabels\assets\Widgets as WidgetsAsset;
 use spicyweb\fieldlabels\models\FieldLabel as FieldLabelModel;
 
 /**
@@ -89,6 +90,7 @@ class Plugin extends BasePlugin
         // Make sure these are not output to the login page code
         if ($requestService->getIsCpRequest() && !$requestService->getIsAjax() && !$userSession->getIsGuest()) {
             $viewService->registerAssetBundle(MainAsset::class);
+            $viewService->registerAssetBundle(WidgetsAsset::class);
 
             if ($userSession->getIsAdmin()) {
                 $viewService->registerAssetBundle(EditorAsset::class);
@@ -100,6 +102,7 @@ class Plugin extends BasePlugin
                 $viewService->registerJs('FieldLabels.labels=' . json_encode($this->_getLabels()), $viewService::POS_END);
                 $viewService->registerJs('FieldLabels.layouts=' . json_encode($this->_getLayouts()), $viewService::POS_END);
                 $viewService->registerJs('FieldLabels.setup()', $viewService::POS_END);
+                $viewService->registerJs('FieldLabels.Widgets.setup()', $viewService::POS_END);
             }
         }
     }
