@@ -254,7 +254,7 @@ class Plugin extends BasePlugin
 
         // Plugin support
         foreach (['commerce', 'calendar'] as $pluginHandle) {
-            if ($pluginsService->isPluginInstalled($pluginHandle)) {
+            if ($pluginsService->isPluginInstalled($pluginHandle) && $pluginsService->isPluginEnabled($pluginHandle)) {
                 $method = '_get' . StringHelper::toCamelCase($pluginHandle) . 'Layouts';
                 $layouts = array_merge($layouts, $this->$method());
             }
