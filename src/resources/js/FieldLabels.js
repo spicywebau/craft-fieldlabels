@@ -34,6 +34,10 @@
 			CALENDAR:                     'calendar',
 			CALENDAR_EVENT:               'calendarEvent',
 
+            // Verbb Events
+            EVENTS_EVENT_TYPE:            'eventsEventType',
+            EVENTS_TICKET_TYPE:           'eventsTicketType',
+
 			// These objects will be populated in the Plugin.php file
 			fields:  null,
 			labels:  null,
@@ -342,6 +346,10 @@
 							// Solspace Calendar actions
 							case 'calendar/calendars/save-calendar': return this.CALENDAR;
 							case 'calendar/events/save-event':       return this.CALENDAR_EVENT;
+
+                            // Verbb Events actions
+                            case 'events/event-types/save': return this.EVENTS_EVENT_TYPE;
+                            case 'events/ticket-types/save': return this.EVENTS_TICKET_TYPE;
 						}
 					}
 				}
@@ -395,6 +403,9 @@
 					case this.COMMERCE_PRODUCT_TYPE: selector = 'input[name="productTypeId"]'; break;
 					case this.CALENDAR:       selector = 'input[name="calendarId"]'; break;
 					case this.CALENDAR_EVENT: selector = 'input[name="calendarEvent[calendarId]"]'; break;
+
+                    case this.EVENTS_EVENT_TYPE: selector = 'input[name="eventTypeId"]'; break;
+                    case this.EVENTS_TICKET_TYPE: selector = 'input[name="ticketTypeId"]'; break;
 				}
 
 				var $input = $form.find(selector);
@@ -449,6 +460,9 @@
 						}
 						case this.CALENDAR:
 						case this.CALENDAR_EVENT: context = this.CALENDAR; break;
+
+                        case this.EVENTS_EVENT_TYPE: context = this.EVENTS_EVENT_TYPE; break;
+                        case this.EVENTS_TICKET_TYPE: context = this.EVENTS_TICKET_TYPE; break;
 					}
 
 					return this.layouts[context][contextId] | 0;
