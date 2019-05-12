@@ -18,6 +18,8 @@
 			var Widget = Craft.Widget;
 			var Widget_init = Craft.Widget.prototype.init;
 			var Widget_update = Craft.Widget.prototype.update;
+			var QuickPostWidget = Craft.QuickPostWidget;
+			var QuickPostWidget_save = Craft.QuickPostWidget.prototype.save;
 
 			Widget.prototype.init = function()
 			{
@@ -45,32 +47,103 @@
 					FieldLabels.Widgets.applyLabels(this.$container, fieldLayoutId);
 				}
 			}
+
+			QuickPostWidget.prototype.save = function()
+			{
+				QuickPostWidget_save.apply(this, arguments);
+
+				var widget = this;
+
+				$(document).on('ajaxComplete.fieldlabels', function(event, xhr, settings)
+				{
+					$(event.currentTarget).off('ajaxComplete.fieldlabels');
+					var errors = xhr.responseJSON['errors'];
+
+					if(typeof errors !== 'undefined' && settings.url.split('/').pop() === 'save-entry')
+					{
+						var fieldLayoutId = FieldLabels.layouts[FieldLabels.ENTRY_TYPE][widget.params.typeId];
+						FieldLabels.Widgets.applyErrorLabels(widget.$errorList, errors, fieldLayoutId);
+
+						// Give other plugins (e.g. Neo) a way to apply their label names to this widget's errors
+						$(document).trigger('labelWidgetErrors', {
+							element: widget.$errorList,
+							errors: errors,
+						});
+					}
+				});
+			}
 		},
 
 		applyLabels: function(element, fieldLayoutId)
 		{
-			var $form = $(element)
+			var $form = $(element);
 			var initLabels = FieldLabels.getLabelsOnFieldLayout(fieldLayoutId);
 
-			if(initLabels)
+			if(!initLabels)
 			{
-				for(var labelId in initLabels) if(initLabels.hasOwnProperty(labelId))
+				return;
+			}
+
+			for(var labelId in initLabels) if(initLabels.hasOwnProperty(labelId))
+			{
+				var label = initLabels[labelId];
+				var field = FieldLabels.getFieldInfo(label.fieldId);
+				var fieldsLocation = $form.find('input[name="fieldsLocation"]').val();
+				var $field = $form.find('#' + fieldsLocation + '-' + field.handle + '-field');
+				var $heading = $field.children('.heading');
+				var $label = $heading.children('label');
+
+				if(label.name)
 				{
-					var label = initLabels[labelId];
-					var field = FieldLabels.getFieldInfo(label.fieldId);
-					var fieldsLocation = $form.find('input[name="fieldsLocation"]').val();
-					var $field = $form.find('#' + fieldsLocation + '-' + field.handle + '-field');
-					var $heading = $field.children('.heading');
-					var $label = $heading.children('label');
+					$label.text(Craft.t('fieldlabels', label.name));
+				}
 
-					if(label.name)
-					{
-						$label.text(Craft.t('fieldlabels', label.name));
-					}
+				if(label.instructions)
+				{
+					FieldLabels.applyInstructions($heading, label.instructions);
+				}
+			}
+		},
 
-					if(label.instructions)
+		applyErrorLabels: function(element, errors, fieldLayoutId, namespace)
+		{
+			var $errors = $(element).children('li');
+			var initLabels = FieldLabels.getLabelsOnFieldLayout(fieldLayoutId);
+
+			if(!initLabels)
+			{
+				return;
+			}
+
+			if(namespace === null || typeof namespace === 'undefined')
+			{
+				namespace = '';
+			}
+
+			for(var labelId in initLabels) if(initLabels.hasOwnProperty(labelId))
+			{
+				var label = initLabels[labelId];
+				var field = FieldLabels.getFieldInfo(label.fieldId);
+				var errorCount = 0;
+
+				for(var handle in errors) if(errors.hasOwnProperty(handle))
+				{
+					for(var i in errors[handle])
 					{
-						FieldLabels.applyInstructions($heading, label.instructions);
+						if(handle === namespace + field.handle)
+						{
+							var $error = $errors.eq(errorCount);
+							var errorText = errors[handle][i];
+							var originalName = Craft.t('fieldlabels', field.name);
+							var translatedName = Craft.t('fieldlabels', label.name);
+
+							if(errorText.includes(originalName))
+							{
+								$error.text(errorText.replace(originalName, translatedName));
+							}
+						}
+
+						errorCount++;
 					}
 				}
 			}
