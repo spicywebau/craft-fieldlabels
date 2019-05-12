@@ -63,6 +63,29 @@ class Service extends Component
     }
 
     /**
+     * Returns the `FieldLabelModel` associated with the given layout and field IDs, if it exists.
+     *
+     * @param int $fieldLayoutId
+     * @param int $fieldId
+     * @return FieldLabelModel|null
+     */
+    public function getLabel(int $fieldLayoutId, int $fieldId)
+    {
+        $result = $this->_createQuery()
+            ->where([
+                'fieldId' => $fieldId,
+                'fieldLayoutId' => $fieldLayoutId,
+            ])
+            ->one();
+
+        if ($result) {
+            return new FieldLabelModel($result);
+        }
+
+        return null;
+    }
+
+    /**
      * Saves all labels for the given field layout ID.
      *
      * @param array $labels The `FieldLabelModel`s to save
@@ -166,6 +189,20 @@ class Service extends Component
     }
 
     /**
+     * Deletes a field label.
+     *
+     * @param FieldLabelModel $label
+     * @return bool
+     * @throws \Throwable
+     */
+    public function deleteLabel(FieldLabelModel $label)
+    {
+        Craft::$app->getProjectConfig()->remove('fieldlabels.' . $label->uid);
+
+        return true;
+    }
+
+    /**
      * Handles a field label change.
      *
      * @param ConfigEvent $event
@@ -220,6 +257,50 @@ class Service extends Component
         }
 
         return true;
+    }
+
+    /**
+     * Handles deleting a field label.
+     *
+     * @param ConfigEvent $event
+     * @throws \Throwable
+     */
+    public function handleDeletedLabel(ConfigEvent $event)
+    {
+        $uid = $event->tokenMatches[0];
+        $record = FieldLabelRecord::findOne(['uid' => $uid]);
+
+        if ($record === null)
+        {
+            return;
+        }
+
+        $dbService = Craft::$app->getDb();
+        $transaction = $dbService->beginTransaction();
+
+        try
+        {
+            $result = $this->_createQuery()
+                ->where(['id' => $record->id])
+                ->one();
+
+            if ($result === null)
+            {
+                return;
+            }
+
+            $affectedRows = $dbService->createCommand()
+                ->delete('{{%fieldlabels}}', ['id' => $result['id']])
+                ->execute();
+
+            $transaction->commit();
+        }
+        catch (\Throwable $e)
+        {
+            $transaction->rollBack();
+
+            throw $e;
+        }
     }
 
     private function _createQuery()

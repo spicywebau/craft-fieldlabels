@@ -112,17 +112,32 @@ class Plugin extends BasePlugin
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD_LAYOUT, function(Event $event) {
             $request = Craft::$app->getRequest();
             $layout = $event->layout;
+            $layoutFieldIds = Craft::$app->getFields()->getFieldIdsByLayoutId($layout->id);
             $fieldLabels = $request->getBodyParam('fieldlabels');
+
+            if (!$fieldLabels) {
+                // Commerce
+                $commerceFieldLabels = $request->getBodyParam('fieldlabels-commerce');
+
+                if ($commerceFieldLabels && isset($commerceFieldLabels[$layout->id])) {
+                    $fieldLabels = $commerceFieldLabels[$layout->id];
+                }
+            }
 
             if ($fieldLabels) {
                 $this->methods->saveLabels($fieldLabels, $layout->id);
-            }
 
-            // Commerce
-            $commerceFieldLabels = $request->getBodyParam('fieldlabels-commerce');
+                $labelledFieldIds = array_keys($fieldLabels);
+                $unlabelledFieldIds = array_filter($layoutFieldIds, function($fieldId) use($labelledFieldIds)
+                {
+                    return !in_array($fieldId, $labelledFieldIds);
+                });
 
-            if ($commerceFieldLabels && isset($commerceFieldLabels[$layout->id])) {
-                $this->methods->saveLabels($commerceFieldLabels[$layout->id], $layout->id);
+                foreach ($unlabelledFieldIds as $fieldId) {
+                    if (($label = $this->methods->getLabel($layout->id, $fieldId)) !== null) {
+                        $this->methods->deleteLabel($label);
+                    }
+                }
             }
 
             // Make sure these labels don't get saved more than once
@@ -136,7 +151,8 @@ class Plugin extends BasePlugin
         // Listen for Field Labels updates in the project config to apply them to the database
         Craft::$app->getProjectConfig()
             ->onAdd('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel'])
-            ->onUpdate('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel']);
+            ->onUpdate('fieldlabels.{uid}', [$this->methods, 'handleChangedLabel'])
+            ->onRemove('fieldlabels.{uid}', [$this->methods, 'handleDeletedLabel']);
 
         // Listen for a project config rebuild, and provide the Field Labels data from the database
         Event::on(ProjectConfig::class, ProjectConfig::EVENT_REBUILD, function(RebuildConfigEvent $event) {
