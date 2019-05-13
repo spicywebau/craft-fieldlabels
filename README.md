@@ -16,7 +16,7 @@ Field Labels supports overriding the names and instructions on any custom fields
 
 ## Requirements
 
-Field Labels requires Craft CMS 3.1.20 or later.  For Relabel for Craft 2, see the [`craft-2`](https://github.com/spicywebau/craft-fieldlabels/tree/craft-2) branch.
+Field Labels requires Craft CMS 3.1.24 or later.  For Relabel for Craft 2, see the [`craft-2`](https://github.com/spicywebau/craft-fieldlabels/tree/craft-2) branch.
 
 ## Installation
 
