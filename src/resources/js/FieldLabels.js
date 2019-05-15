@@ -237,13 +237,23 @@
 					{
 						var $translatable = $label.children('[data-icon="language"]');
 						var isTranslatable = $translatable.length > 0;
+						var originalName = $label.text().trim();
+						var translatedName = Craft.t('fieldlabels', label.name);
 
-						$label.text(Craft.t('fieldlabels', label.name) + (isTranslatable ? ' ' : ''));
+						$label.text(translatedName + (isTranslatable ? ' ' : ''));
 
 						if(isTranslatable)
 						{
 							$label.append($translatable);
 						}
+
+						// Apply the label name to any errors
+						$field.children('.errors').children('li').each(function() {
+							var $error = $(this);
+							var newText = $error.text().replace(originalName, translatedName);
+
+							$error.text(newText);
+						});
 					}
 
 					if(label.instructions)
