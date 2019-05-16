@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.1 - 2019-05-16
+
+### Changed
+- Update minimum Craft version in readme - thanks @ttempleton
+- Apply label names to error messages - thanks @ttempleton
+
+### Fixed
+- Fix labels not being deleted when name/instructions removed - thanks @ttempleton
+
 ## 1.1.0 - 2019-05-09
 ### Added
 - Add quick post widgets support - thanks @ttempleton
