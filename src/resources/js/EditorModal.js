@@ -42,6 +42,20 @@
 							'<ul id="fieldlabels-instruct-errors" class="errors" style="display: none;"></ul>',
 						'</div>',
 					'</div>',
+					'<div class="field">',
+						'<div class="heading">',
+							'<input id="fieldlabels-hidename-field" type="checkbox" class="checkbox">',
+							'<label for="fieldlabels-hidename-field">', Craft.t('fieldlabels', 'Hide Name'), '</label>',
+							'<div class="instructions"><p>', Craft.t('fieldlabels', 'Applies to the original or relabelled name.'), '</p></div>',
+						'</div>',
+					'</div>',
+					'<div class="field">',
+						'<div class="heading">',
+							'<input id="fieldlabels-hideinstruct-field" type="checkbox" class="checkbox">',
+							'<label for="fieldlabels-hideinstruct-field">', Craft.t('fieldlabels', 'Hide Instructions'), '</label>',
+							'<div class="instructions"><p>', Craft.t('fieldlabels', 'Applies to the original or relabelled instructions.'), '</p></div>',
+						'</div>',
+					'</div>',
 					'<div class="buttons right" style="margin-top: 0;">',
 						'<div id="fieldlabels-cancel-button" class="btn">', Craft.t('fieldlabels', 'Cancel'), '</div>',
 						'<input id="fieldlabels-save-button" type="submit" class="btn submit" value="', Craft.t('fieldlabels', 'Save'), '">',
@@ -53,6 +67,8 @@
 			this.$nameErrors = body.find('#fieldlabels-name-errors');
 			this.$instructField = body.find('#fieldlabels-instruct-field');
 			this.$instructErrors = body.find('#fieldlabels-instruct-errors');
+			this.$hideNameField = body.find('#fieldlabels-hidename-field');
+			this.$hideInstructField = body.find('#fieldlabels-hideinstruct-field');
 			this.$cancelBtn = body.find('#fieldlabels-cancel-button');
 			this.$saveBtn = body.find('#fieldlabels-save-button');
 
@@ -75,7 +91,9 @@
 
 			this.trigger('setLabel', {
 				name: this.$nameField.val(),
-				instructions: this.$instructField.val()
+				instructions: this.$instructField.val(),
+				hideName: this.$hideNameField.is(':checked'),
+				hideInstructions: this.$hideInstructField.is(':checked'),
 			});
 
 			this.hide();
@@ -96,10 +114,12 @@
 			this.$shade.remove();
 		},
 
-		show: function(name, instruct)
+		show: function(name, instruct, hideName, hideInstruct)
 		{
-			if(name)     this.$nameField.val(name);
-			if(instruct) this.$instructField.val(instruct);
+			if(name)         this.$nameField.val(name);
+			if(instruct)     this.$instructField.val(instruct);
+			if(hideName)     this.$hideNameField.attr('checked', hideName);
+			if(hideInstruct) this.$hideInstructField.attr('checked', hideInstruct);
 
 			if(!Garnish.isMobileBrowser())
 			{

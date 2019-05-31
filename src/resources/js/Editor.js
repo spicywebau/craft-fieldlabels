@@ -56,7 +56,7 @@
 				for(var labelId in initLabels) if(initLabels.hasOwnProperty(labelId))
 				{
 					var label = initLabels[labelId];
-					this.setFormData(label.fieldId, label.name, label.instructions);
+					this.setFormData(label.fieldId, label.name, label.instructions, label.hideName, label.hideInstructions);
 				}
 			}
 		},
@@ -75,30 +75,38 @@
 			var that = this;
 			modal.on('setLabel', function(f)
 			{
-				that.setFormData(fieldId, f.name, f.instructions);
+				that.setFormData(fieldId, f.name, f.instructions, f.hideName, f.hideInstructions);
 			});
 
 			modal.show(
 				label ? label.name : '',
-				label ? label.instructions : ''
+				label ? label.instructions : '',
+				label ? label.hideName : false,
+				label ? label.hideInstructions : false
 			);
 		},
 
-		setFormData: function(fieldId, name, instruct)
+		setFormData: function(fieldId, name, instruct, hideName, hideInstruct)
 		{
 			var $container = this.fld.$container;
 			var $field = $container.find('.fld-field[data-id="' + fieldId + '"]');
 
 			var nameField = this.namespace + '[' + fieldId + '][name]';
 			var instructField = this.namespace + '[' + fieldId + '][instructions]';
+			var hideNameField = this.namespace + '[' + fieldId + '][hideName]';
+			var hideInstructField = this.namespace + '[' + fieldId + '][hideInstructions]';
 
 			$field.children('input[name="' + nameField + '"]').remove();
 			$field.children('input[name="' + instructField + '"]').remove();
+			$field.children('input[name="' + hideNameField + '"]').remove();
+			$field.children('input[name="' + hideInstructField + '"]').remove();
 
-			if(name)     $('<input type="hidden" name="' + nameField     + '">').val(name).appendTo($field);
-			if(instruct) $('<input type="hidden" name="' + instructField + '">').val(instruct).appendTo($field);
+			if(name)         $('<input type="hidden" name="' + nameField     + '">').val(name).appendTo($field);
+			if(instruct)     $('<input type="hidden" name="' + instructField + '">').val(instruct).appendTo($field);
+			if(hideName)     $('<input type="hidden" name="' + hideNameField     + '">').val(1).appendTo($field);
+			if(hideInstruct) $('<input type="hidden" name="' + hideInstructField + '">').val(1).appendTo($field);
 
-			var hasLabel = !!(name || instruct);
+			var hasLabel = !!(name || instruct || hideName || hideInstruct);
 
 			$field.toggleClass('fieldlabelled', hasLabel);
 
@@ -106,7 +114,9 @@
 			{
 				this.labels[fieldId] = {
 					name: name,
-					instructions: instruct
+					instructions: instruct,
+					hideName: hideName,
+					hideInstructions: hideInstruct,
 				};
 			}
 			else

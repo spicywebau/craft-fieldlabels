@@ -14,53 +14,64 @@ use craft\base\Model;
  */
 class FieldLabel extends Model
 {
-	/**
-	 * @var int|null The block type ID.
-	 */
-	public $id;
+    /**
+     * @var int|null The block type ID.
+     */
+    public $id;
 
-	/**
-	 * @var int|null The field ID.
-	 */
-	public $fieldId;
+    /**
+     * @var int|null The field ID.
+     */
+    public $fieldId;
 
-	/**
-	 * @var int|null The field layout ID.
-	 */
-	public $fieldLayoutId;
+    /**
+     * @var int|null The field layout ID.
+     */
+    public $fieldLayoutId;
 
-	/**
-	 * @var string|null The label name.
-	 */
-	public $name;
+    /**
+     * @var string|null The label name.
+     */
+    public $name;
 
-	/**
-	 * @var string|null The label instructions.
-	 */
-	public $instructions;
+    /**
+     * @var string|null The label instructions.
+     */
+    public $instructions;
 
-	/**
-	 * @var string
-	 */
-	public $uid;
+    /**
+     * @var bool Whether to hide the label name.
+     */
+    public $hideName = false;
 
-	/**
-	 * @inheritdoc
-	 */
-	public function rules()
-	{
-		return [
-			[['id', 'fieldId'], 'number', 'integerOnly' => true],
-		];
-	}
+    /**
+     * @var bool Whether to hide the label instructions.
+     */
+    public $hideInstructions = false;
 
-	/**
-	 * Returns the label name as the string representation.
-	 *
-	 * @return string
-	 */
-	public function __toString(): string
-	{
-		return (string)$this->name;
-	}
+    /**
+     * @var string
+     */
+    public $uid;
+
+    /**
+     * @inheritdoc
+     */
+    public function rules()
+    {
+        return [
+            [['id', 'fieldId'], 'number', 'integerOnly' => true],
+            [['hideName', 'hideInstructions'], 'boolean'],
+        ];
+    }
+
+    /**
+     * Returns the label name as the string representation.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return (string)$this->name;
+    }
 }

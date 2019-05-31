@@ -32,6 +32,8 @@ class Install extends Migration
                 'fieldLayoutId' => $this->integer()->notNull(),
                 'name' => $this->string()->null(),
                 'instructions' => $this->text()->null(),
+                'hideName' => $this->boolean()->notNull(),
+                'hideInstructions' => $this->boolean()->notNull(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid(),
@@ -46,7 +48,7 @@ class Install extends Migration
             $this->addForeignKey(null, '{{%fieldlabels}}', ['fieldLayoutId'], '{{%fieldlayouts}}', ['id'], 'CASCADE', null);
         }
 
-        // Check if we need to migrate content from an old version
+        // Check if we need to migrate content from Field Labels' Craft 2 version, the original Relabel
         if ($this->db->tableExists('{{%relabel}}')) {
             $this->_migrate();
         }
@@ -63,7 +65,7 @@ class Install extends Migration
     }
 
     /**
-     * Performs the upgrade migration from the original Relabel for Craft 2.
+     * Performs the upgrade migration from Field Labels' Craft 2 version, the original Relabel.
      */
     private function _migrate()
     {
@@ -104,8 +106,15 @@ class Install extends Migration
             ->all();
 
         foreach ($oldLabels as $oldLabelRow) {
-            $oldLabel = new FieldLabelModel($oldLabelRow);
-            FieldLabels::$plugin->methods->saveLabel($oldLabel);
+            // Add some new column data
+            $newLabelRow = array_merge($oldLabelRow, [
+                'hideName' => false,
+                'hideInstructions' => false,
+            ]);
+
+            // Save
+            $newLabel = new FieldLabelModel($newLabelRow);
+            FieldLabels::$plugin->methods->saveLabel($newLabel);
         }
 
         // Drop the old table now
