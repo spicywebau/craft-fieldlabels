@@ -114,7 +114,7 @@
 			this.$shade.remove();
 		},
 
-		show: function(name, instruct, hideName, hideInstruct)
+		show: function(name, instruct, hideName = false, hideInstruct = false)
 		{
 			if(name)         this.$nameField.val(name);
 			if(instruct)     this.$instructField.val(instruct);

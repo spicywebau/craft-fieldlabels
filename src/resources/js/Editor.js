@@ -86,7 +86,7 @@
 			);
 		},
 
-		setFormData: function(fieldId, name, instruct, hideName, hideInstruct)
+		setFormData: function(fieldId, name, instruct, hideName = false, hideInstruct = false)
 		{
 			var $container = this.fld.$container;
 			var $field = $container.find('.fld-field[data-id="' + fieldId + '"]');
