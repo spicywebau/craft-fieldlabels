@@ -272,7 +272,7 @@ class Plugin extends BasePlugin
         }
 
         // Plugin support
-        foreach (['commerce', 'calendar'] as $pluginHandle) {
+        foreach (['commerce', 'calendar', 'events'] as $pluginHandle) {
             if ($pluginsService->isPluginInstalled($pluginHandle) && $pluginsService->isPluginEnabled($pluginHandle)) {
                 $method = '_get' . StringHelper::toCamelCase($pluginHandle) . 'Layouts';
                 $layouts = array_merge($layouts, $this->$method());
@@ -315,6 +315,20 @@ class Plugin extends BasePlugin
         $calendars = $calendarPlugin->calendars->getAllCalendars();
         $layouts = [
             'calendar' => $this->_mapLayouts($calendars),
+        ];
+
+        return $layouts;
+    }
+
+    private function _getEventsLayouts(): array
+    {
+        $eventsPlugin = Craft::$app->getPlugins()->getPlugin('events');
+        $eventTypes = $eventsPlugin->getEventTypes()->getAllEventTypes();
+        $ticketTypes = $eventsPlugin->getTicketTypes()->getAllTicketTypes();
+
+        $layouts = [
+            'eventsEventType' => $this->_mapLayouts($eventTypes),
+            'eventsTicketType' => $this->_mapLayouts($ticketTypes),
         ];
 
         return $layouts;
