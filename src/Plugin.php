@@ -39,7 +39,7 @@ class Plugin extends BasePlugin
 	/**
 	 * @inheritdoc
 	 */
-	public $schemaVersion = '1.1.0';
+	public $schemaVersion = '1.1.2';
 
 	/**
 	 * @var array
@@ -161,6 +161,8 @@ class Plugin extends BasePlugin
                 ->select([
                     'fl.name',
                     'fl.instructions',
+                    'fl.hideName',
+                    'fl.hideInstructions',
                     'fl.uid',
                     'fields.uid AS field',
                     'layouts.uid AS fieldLayout'
@@ -175,6 +177,8 @@ class Plugin extends BasePlugin
                     'fieldLayout' => $label['fieldLayout'],
                     'name' => $label['name'],
                     'instructions' => $label['instructions'],
+                    'hideName' => (bool)$label['hideName'],
+                    'hideInstructions' => (bool)$label['hideInstructions'],
                 ];
             }
 
@@ -211,6 +215,8 @@ class Plugin extends BasePlugin
                 'fieldLayoutId' => (int)$label->fieldLayoutId,
                 'name' => Craft::t('fieldlabels', $label->name),
                 'instructions' => Craft::t('fieldlabels', $label->instructions),
+                'hideName' => (bool)$label->hideName,
+                'hideInstructions' => (bool)$label->hideInstructions,
             ];
         }
 

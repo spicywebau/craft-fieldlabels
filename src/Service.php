@@ -106,6 +106,14 @@ class Service extends Component
                 $label->instructions = $labelInfo['instructions'];
             }
 
+            if (array_key_exists('hideName', $labelInfo)) {
+                $label->hideName = (bool)$labelInfo['hideName'];
+            }
+
+            if (array_key_exists('hideInstructions', $labelInfo)) {
+                $label->hideInstructions = (bool)$labelInfo['hideInstructions'];
+            }
+
             $this->saveLabel($label);
         }
     }
@@ -171,6 +179,8 @@ class Service extends Component
             'fieldLayout' => $layoutUid,
             'name' => $label->name,
             'instructions' => $label->instructions,
+            'hideName' => (bool)$label->hideName,
+            'hideInstructions' => (bool)$label->hideInstructions,
         ];
 
         if ($isNew) {
@@ -238,6 +248,8 @@ class Service extends Component
             $record->fieldLayoutId = $fieldLayoutId;
             $record->name = $data['name'];
             $record->instructions = $data['instructions'];
+            $record->hideName = $data['hideName'];
+            $record->hideInstructions = $data['hideInstructions'];
             $record->uid = $uid;
             $record->save(false);
 
@@ -312,6 +324,8 @@ class Service extends Component
                 'fieldLayoutId',
                 'name',
                 'instructions',
+                'hideName',
+                'hideInstructions',
                 'uid',
             ])
             ->from('{{%fieldlabels}}');

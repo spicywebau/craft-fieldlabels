@@ -6,6 +6,8 @@ A Craft CMS plugin that allows overriding field labels and instructions for indi
 This is useful for when you want to tailor the name or instructions of a field to a particular area, without having to
 create another (essentially identical) field.
 
+If you want to *hide* a field's name or instructions, rather than replace them -- Field Labels can do that, too!  Just check the Hide Name and/or the Hide Instructions boxes in the Field Labels relabelling modal window.
+
 Field Labels supports overriding the names and instructions on any custom fields used with:
 - Craft CMS's in-built sections/entry types, category groups, global sets, users, assets/volumes and tag groups
 - Craft Commerce product types, variants, orders and subscriptions

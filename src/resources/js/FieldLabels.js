@@ -282,6 +282,16 @@
 							});
 						}
 					}
+
+					if(label.hideName)
+					{
+						$label.addClass('hidden');
+					}
+
+					if(label.hideInstructions)
+					{
+						$heading.find('.instructions').addClass('hidden');
+					}
 				}
 			},
 
