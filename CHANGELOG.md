@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.2 - 2019-06-05
+
+### Added
+- Add ability to hide field names/instructions - thanks @ttempleton
+- Add support for Verbb Events - thanks @engram-design
+
 ## 1.1.1 - 2019-05-16
 
 ### Changed
