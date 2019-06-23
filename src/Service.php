@@ -257,6 +257,17 @@ class Service extends Component
 
             // Trigger an `afterSaveLabel` event
             if ($this->hasEventHandlers('afterSaveLabel')) {
+                $label = new FieldLabelModel([
+                    'id' => $record->id,
+                    'fieldId' => $record->fieldId,
+                    'fieldLayoutId' => $record->fieldLayoutId,
+                    'name' => $record->name,
+                    'instructions' => $record->instructions,
+                    'hideName' => $record->hideName,
+                    'hideInstructions' => $record->hideInstructions,
+                    'uid' => $record->uid,
+                ]);
+
                 $this->trigger('afterSaveLabel', new FieldLabelsEvent([
                     'label'      => $label,
                     'isNewLabel' => $isNew,
