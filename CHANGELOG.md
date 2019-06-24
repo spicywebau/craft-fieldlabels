@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.3 - 2019-06-24
+
+### Fixed
+- Ensure $label exists when triggering afterSaveLabel event - thanks @ttempleton
+
 ## 1.1.2 - 2019-06-05
 
 ### Added
