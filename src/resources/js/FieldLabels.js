@@ -333,7 +333,7 @@
 				}
 				else
 				{
-					var $action = $form.find('input[name="action"]');
+					var $action = $form.find('input[name="action"]').length ? $form.find('input[name="action"]') : $form.find('input#apply-btn.btn.submit');
 					var action = $action.val();
 
 					if(action)
@@ -345,6 +345,8 @@
 							case 'categories/save-group':    return this.CATEGORY_GROUP;
 							case 'globals/save-content':     return this.GLOBAL;
 							case 'globals/save-set':         return this.GLOBAL_SET;
+							// new for craft 3.2
+							case 'Update Entry':
 							case 'entries/save-entry':
 							case 'entry-revisions/save-draft':
 							{
@@ -424,8 +426,8 @@
 					case this.CALENDAR:       selector = 'input[name="calendarId"]'; break;
 					case this.CALENDAR_EVENT: selector = 'input[name="calendarEvent[calendarId]"]'; break;
 
-                    case this.EVENTS_EVENT_TYPE: selector = 'input[name="eventTypeId"]'; break;
-                    case this.EVENTS_TICKET_TYPE: selector = 'input[name="ticketTypeId"]'; break;
+					case this.EVENTS_EVENT_TYPE: selector = 'input[name="eventTypeId"]'; break;
+					case this.EVENTS_TICKET_TYPE: selector = 'input[name="ticketTypeId"]'; break;
 				}
 
 				var $input = $form.find(selector);
