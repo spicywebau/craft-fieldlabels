@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.4 - 2019-07-15
+
+### Fixed
+- Fix for labels not being applied in Craft 3.2
+
 ## 1.1.3 - 2019-06-24
 
 ### Fixed
