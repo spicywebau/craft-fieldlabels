@@ -39,6 +39,10 @@
 			EVENTS_EVENT_TYPE:            'eventsEventType',
 			EVENTS_TICKET_TYPE:           'eventsTicketType',
 
+			// Verbb Gift Voucher
+			GIFT_VOUCHER:                 'giftVoucher',
+			GIFT_VOUCHER_TYPE:            'giftVoucherType',
+
 			// These objects will be populated in the Plugin.php file
 			fields:  null,
 			labels:  null,
@@ -385,6 +389,10 @@
 							case 'events/events/save': return this.EVENTS_EVENT;
 							case 'events/event-types/save': return this.EVENTS_EVENT_TYPE;
 							case 'events/ticket-types/save': return this.EVENTS_TICKET_TYPE;
+
+							// Verbb Gift Voucher actions
+							case 'gift-voucher/vouchers/save': return this.GIFT_VOUCHER;
+							case 'gift-voucher/voucher-types/save': return this.GIFT_VOUCHER_TYPE;
 						}
 					}
 				}
@@ -441,6 +449,8 @@
 					case this.EVENTS_EVENT: selector = 'input[name="typeId"]'; break;
 					case this.EVENTS_EVENT_TYPE: selector = 'input[name="eventTypeId"]'; break;
 					case this.EVENTS_TICKET_TYPE: selector = 'input[name="ticketTypeId"]'; break;
+					case this.GIFT_VOUCHER: selector = 'input[name="typeId"]'; break;
+					case this.GIFT_VOUCHER_TYPE: selector = 'input[name="voucherTypeId"]'; break;
 				}
 
 				var $input = $form.find(selector);
@@ -498,6 +508,8 @@
 						case this.EVENTS_EVENT:
 						case this.EVENTS_EVENT_TYPE: context = this.EVENTS_EVENT_TYPE; break;
 						case this.EVENTS_TICKET_TYPE: context = this.EVENTS_TICKET_TYPE; break;
+						case this.GIFT_VOUCHER:
+						case this.GIFT_VOUCHER_TYPE: context = this.GIFT_VOUCHER_TYPE; break;
 					}
 
 					return this.layouts[context][contextId] | 0;
