@@ -10,6 +10,7 @@
 	 */
 	var Editor = Garnish.Base.extend({
 
+		editorId: null,
 		fld: null,
 		labels: null,
 
@@ -28,18 +29,21 @@
 			this.fld = fld;
 			this.fld.on('fieldLabelsOptionSelected', $.proxy(this.openModal, this));
 
+			this.editorId = Math.max($('.fieldlayoutform').index(this.fld.$container), 0);
+
 			this.$form = this.fld.$container.closest('form');
 
 			this.labels = {};
 
 			var fieldLayoutId = FieldLabels.getFieldLayoutId(this.$form);
 
-			if(Array.isArray(fieldLayoutId))
+			if(typeof fieldLayoutId === 'object')
 			{
-				// Commerce!
-				var i = this.fld.$container.attr('id').split('-')[0] !== 'variant' ? 0 : 1;
-				this.namespace = 'fieldlabels-commerce[' + fieldLayoutId[i] + ']';
-				this.applyLabels(fieldLayoutId[i]);
+				// Commerce, Wishlist, could be reused for similar cases
+				var fldId = this.fld.$container.prop('id');
+				var item = fldId === 'fieldlayoutform' ? 'default' : fldId.split('-layout-')[0];
+
+				this.applyLabels(fieldLayoutId[item]);
 			}
 			else if(fieldLayoutId !== false)
 			{
@@ -91,10 +95,10 @@
 			var $container = this.fld.$container;
 			var $field = $container.find('.fld-field[data-id="' + fieldId + '"]');
 
-			var nameField = this.namespace + '[' + fieldId + '][name]';
-			var instructField = this.namespace + '[' + fieldId + '][instructions]';
-			var hideNameField = this.namespace + '[' + fieldId + '][hideName]';
-			var hideInstructField = this.namespace + '[' + fieldId + '][hideInstructions]';
+			var nameField = this.namespace + '[' + this.editorId + '][' + fieldId + '][name]';
+			var instructField = this.namespace + '[' + this.editorId + '][' + fieldId + '][instructions]';
+			var hideNameField = this.namespace + '[' + this.editorId + '][' + fieldId + '][hideName]';
+			var hideInstructField = this.namespace + '[' + this.editorId + '][' + fieldId + '][hideInstructions]';
 
 			$field.children('input[name="' + nameField + '"]').remove();
 			$field.children('input[name="' + instructField + '"]').remove();

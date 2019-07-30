@@ -36,17 +36,22 @@ class Plugin extends BasePlugin
      */
     public static $plugin;
 
-	/**
-	 * @inheritdoc
-	 */
-	public $schemaVersion = '1.1.2';
+    /**
+     * @inheritdoc
+     */
+    public $schemaVersion = '1.1.2';
 
-	/**
-	 * @var array
-	 */
-	public $controllerMap = [
-		'actions' => Controller::class,
-	];
+    /**
+     * @var array
+     */
+    public $controllerMap = [
+        'actions' => Controller::class,
+    ];
+
+    /**
+     * @var array
+     */
+    private $_labels;
 
     /**
      * @inheritdoc
@@ -109,40 +114,36 @@ class Plugin extends BasePlugin
 
     private function _bindEvent()
     {
-        Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD_LAYOUT, function(Event $event) {
-            $request = Craft::$app->getRequest();
+        $savedLayouts = 0;
+
+        Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD_LAYOUT, function(Event $event) use(&$savedLayouts) {
             $layout = $event->layout;
             $layoutFieldIds = Craft::$app->getFields()->getFieldIdsByLayoutId($layout->id);
-            $fieldLabels = $request->getBodyParam('fieldlabels');
 
-            if (!$fieldLabels) {
-                // Commerce
-                $commerceFieldLabels = $request->getBodyParam('fieldlabels-commerce');
+            if ($this->_labels === null) {
+                $this->_labels = Craft::$app->getRequest()->getBodyParam('fieldlabels');
+            }
 
-                if ($commerceFieldLabels && isset($commerceFieldLabels[$layout->id])) {
-                    $fieldLabels = $commerceFieldLabels[$layout->id];
+            $labelledFieldIds = [];
+
+            if ($this->_labels && isset($this->_labels[$savedLayouts])) {
+                $labels = $this->_labels[$savedLayouts];
+                $labelledFieldIds = array_keys($labels);
+
+                $this->methods->saveLabels($labels, $layout->id);
+            }
+
+            $unlabelledFieldIds = array_filter($layoutFieldIds, function($fieldId) use($labelledFieldIds) {
+                return !in_array($fieldId, $labelledFieldIds);
+            });
+
+            foreach ($unlabelledFieldIds as $fieldId) {
+                if (($label = $this->methods->getLabel($layout->id, $fieldId)) !== null) {
+                    $this->methods->deleteLabel($label);
                 }
             }
 
-            if ($fieldLabels) {
-                $this->methods->saveLabels($fieldLabels, $layout->id);
-
-                $labelledFieldIds = array_keys($fieldLabels);
-                $unlabelledFieldIds = array_filter($layoutFieldIds, function($fieldId) use($labelledFieldIds)
-                {
-                    return !in_array($fieldId, $labelledFieldIds);
-                });
-
-                foreach ($unlabelledFieldIds as $fieldId) {
-                    if (($label = $this->methods->getLabel($layout->id, $fieldId)) !== null) {
-                        $this->methods->deleteLabel($label);
-                    }
-                }
-            }
-
-            // Make sure these labels don't get saved more than once
-            unset($_POST['fieldlabels']);
-            unset($_POST['fieldlabels-commerce[' . $layout->id . ']']);
+            $savedLayouts++;
         });
     }
 
@@ -367,7 +368,7 @@ class Plugin extends BasePlugin
 
         foreach ($list as $item) {
             $output[(int)$item->id] = [
-                'productType' => (int)$item->fieldLayoutId,
+                'default' => (int)$item->fieldLayoutId,
                 'variant' => (int)$item->variantFieldLayoutId,
             ];
         }
