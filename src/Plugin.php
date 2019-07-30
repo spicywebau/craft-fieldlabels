@@ -279,7 +279,7 @@ class Plugin extends BasePlugin
         }
 
         // Plugin support
-        foreach (['commerce', 'calendar', 'events', 'gift-voucher'] as $pluginHandle) {
+        foreach (['commerce', 'calendar', 'events', 'gift-voucher', 'wishlist'] as $pluginHandle) {
             if ($pluginsService->isPluginInstalled($pluginHandle) && $pluginsService->isPluginEnabled($pluginHandle)) {
                 $method = '_get' . StringHelper::toCamelCase($pluginHandle) . 'Layouts';
                 $layouts = array_merge($layouts, $this->$method());
@@ -351,6 +351,26 @@ class Plugin extends BasePlugin
         ];
     }
 
+    private function _getWishlistLayouts(): array
+    {
+        $wishlistPlugin = Craft::$app->getPlugins()->getPlugin('wishlist');
+        $wishlistTypes = $wishlistPlugin->getListTypes()->getAllListTypes();
+
+        // List items have their own pages, so we need to map the lists to item layout IDs for use on those pages
+        $wishlistItemsService = $wishlistPlugin->getItems();
+        $wishlistItems = [];
+        $wishlistLists = \verbb\wishlist\elements\ListElement::find()->all();
+
+        foreach ($wishlistLists as $list) {
+            $wishlistItems[(int)$list->id] = $list->getType()->itemFieldLayoutId;
+        }
+
+        return [
+            'wishlistListTypes' => $this->_mapWishlistLayouts($wishlistTypes),
+            'wishlistListItems' => $wishlistItems,
+        ];
+    }
+
     private function _mapLayouts($list): array
     {
         $output = [];
@@ -370,6 +390,20 @@ class Plugin extends BasePlugin
             $output[(int)$item->id] = [
                 'default' => (int)$item->fieldLayoutId,
                 'variant' => (int)$item->variantFieldLayoutId,
+            ];
+        }
+
+        return $output;
+    }
+
+    private function _mapWishlistLayouts($list): array
+    {
+        $output = [];
+
+        foreach ($list as $item) {
+            $output[(int)$item->id] = [
+                'default' => (int)$item->fieldLayoutId,
+                'item' => (int)$item->itemFieldLayoutId,
             ];
         }
 
