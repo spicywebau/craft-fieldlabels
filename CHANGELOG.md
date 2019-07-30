@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.5 - 2019-07-30
+
+### Added
+- Add Verbb Gift Voucher support. Thanks @ttempleton
+
+### Fixed
+- Fix issue with Events labels not showing. Thanks @ttempleton
+
 ## 1.1.4 - 2019-07-15
 
 ### Fixed
