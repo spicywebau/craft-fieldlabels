@@ -13,6 +13,8 @@ Field Labels supports overriding the names and instructions on any custom fields
 - Craft Commerce product types, variants, orders and subscriptions
 - [Neo](https://github.com/spicywebau/craft-neo) fields
 - [Solspace Calendar](https://github.com/solspace/craft3-calendar) events
+- [Verbb Events](https://github.com/verbb/events)
+- [Verbb Gift Voucher](https://github.com/verbb/gift-voucher)
 
 *Note: This is the plugin originally released for Craft 2 as Relabel.*
 

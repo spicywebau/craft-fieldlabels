@@ -34,9 +34,14 @@
 			CALENDAR:                     'calendar',
 			CALENDAR_EVENT:               'calendarEvent',
 
-            // Verbb Events
-            EVENTS_EVENT_TYPE:            'eventsEventType',
-            EVENTS_TICKET_TYPE:           'eventsTicketType',
+			// Verbb Events
+			EVENTS_EVENT:                 'eventsEvent',
+			EVENTS_EVENT_TYPE:            'eventsEventType',
+			EVENTS_TICKET_TYPE:           'eventsTicketType',
+
+			// Verbb Gift Voucher
+			GIFT_VOUCHER:                 'giftVoucher',
+			GIFT_VOUCHER_TYPE:            'giftVoucherType',
 
 			// These objects will be populated in the Plugin.php file
 			fields:  null,
@@ -225,7 +230,7 @@
 					var $field;
 
 					// Get Commerce variant fields, since their field IDs include the variant IDs
-					if(namespace !== 'variants-')
+					if(namespace !== 'variants-' && namespace !== 'tickets-')
 					{
 						$field = $form.find('#' + namespace + 'fields-' + field.handle + '-field');
 					}
@@ -293,6 +298,17 @@
 						$heading.find('.instructions').addClass('hidden');
 					}
 				}
+
+				// Verbb Events: apply labels to tickets on event pages
+				$form.find('.create-tickets').each(function()
+				{
+					var $ticket = $(this);
+					var typeId = $ticket.find('[data-type="verbb\\\\events\\\\elements\\\\TicketType"]').data('id');
+					var typeLayoutId = FieldLabels.getFieldLayoutId(FieldLabels.EVENTS_TICKET_TYPE, typeId);
+
+					FieldLabels.applyLabels($ticket.find('.create-tickets-settings'), typeLayoutId, 'tickets-');
+				});
+
 			},
 
 			applyInstructions: function(heading, instructions)
@@ -369,9 +385,14 @@
 							case 'calendar/calendars/save-calendar': return this.CALENDAR;
 							case 'calendar/events/save-event':       return this.CALENDAR_EVENT;
 
-                            // Verbb Events actions
-                            case 'events/event-types/save': return this.EVENTS_EVENT_TYPE;
-                            case 'events/ticket-types/save': return this.EVENTS_TICKET_TYPE;
+							// Verbb Events actions
+							case 'events/events/save': return this.EVENTS_EVENT;
+							case 'events/event-types/save': return this.EVENTS_EVENT_TYPE;
+							case 'events/ticket-types/save': return this.EVENTS_TICKET_TYPE;
+
+							// Verbb Gift Voucher actions
+							case 'gift-voucher/vouchers/save': return this.GIFT_VOUCHER;
+							case 'gift-voucher/voucher-types/save': return this.GIFT_VOUCHER_TYPE;
 						}
 					}
 				}
@@ -425,9 +446,11 @@
 					case this.COMMERCE_PRODUCT_TYPE: selector = 'input[name="productTypeId"]'; break;
 					case this.CALENDAR:       selector = 'input[name="calendarId"]'; break;
 					case this.CALENDAR_EVENT: selector = 'input[name="calendarEvent[calendarId]"]'; break;
-
+					case this.EVENTS_EVENT: selector = 'input[name="typeId"]'; break;
 					case this.EVENTS_EVENT_TYPE: selector = 'input[name="eventTypeId"]'; break;
 					case this.EVENTS_TICKET_TYPE: selector = 'input[name="ticketTypeId"]'; break;
+					case this.GIFT_VOUCHER: selector = 'input[name="typeId"]'; break;
+					case this.GIFT_VOUCHER_TYPE: selector = 'input[name="voucherTypeId"]'; break;
 				}
 
 				var $input = $form.find(selector);
@@ -482,9 +505,11 @@
 						}
 						case this.CALENDAR:
 						case this.CALENDAR_EVENT: context = this.CALENDAR; break;
-
-                        case this.EVENTS_EVENT_TYPE: context = this.EVENTS_EVENT_TYPE; break;
-                        case this.EVENTS_TICKET_TYPE: context = this.EVENTS_TICKET_TYPE; break;
+						case this.EVENTS_EVENT:
+						case this.EVENTS_EVENT_TYPE: context = this.EVENTS_EVENT_TYPE; break;
+						case this.EVENTS_TICKET_TYPE: context = this.EVENTS_TICKET_TYPE; break;
+						case this.GIFT_VOUCHER:
+						case this.GIFT_VOUCHER_TYPE: context = this.GIFT_VOUCHER_TYPE; break;
 					}
 
 					return this.layouts[context][contextId] | 0;

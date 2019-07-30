@@ -278,7 +278,7 @@ class Plugin extends BasePlugin
         }
 
         // Plugin support
-        foreach (['commerce', 'calendar', 'events'] as $pluginHandle) {
+        foreach (['commerce', 'calendar', 'events', 'gift-voucher'] as $pluginHandle) {
             if ($pluginsService->isPluginInstalled($pluginHandle) && $pluginsService->isPluginEnabled($pluginHandle)) {
                 $method = '_get' . StringHelper::toCamelCase($pluginHandle) . 'Layouts';
                 $layouts = array_merge($layouts, $this->$method());
@@ -338,6 +338,16 @@ class Plugin extends BasePlugin
         ];
 
         return $layouts;
+    }
+
+    private function _getGiftVoucherLayouts(): array
+    {
+        $giftVoucherPlugin = Craft::$app->getPlugins()->getPlugin('gift-voucher');
+        $voucherTypes = $giftVoucherPlugin->getVoucherTypes()->getAllVoucherTypes();
+
+        return [
+            'giftVoucherType' => $this->_mapLayouts($voucherTypes),
+        ];
     }
 
     private function _mapLayouts($list): array
