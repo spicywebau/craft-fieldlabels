@@ -349,8 +349,25 @@
 				}
 				else
 				{
-					var $action = $form.find('input[name="action"]').length ? $form.find('input[name="action"]') : $form.find('input#apply-btn.btn.submit');
-					var action = $action.val();
+					// finding the action/save button. since it was changed multiple times after 3.1..
+					var $action = null;
+
+					// before 3.2
+					if ($form.find('input[name="action"]').length) {
+						$action = $form.find('input[name="action"]');
+					}
+
+					// after 3.1
+					if ($action === null && $form.find('input#apply-btn.btn.submit').length) {
+						$action = $form.find('input#apply-btn.btn.submit');
+					}
+
+					// after 3.2
+					if ($action === null && $form.find('#save-btn-container input.btn.submit').length) {
+						$action = $form.find('#save-btn-container input.btn.submit');
+					}
+
+					var action = $action !== null ? $action.val() : false;
 
 					if(action)
 					{
@@ -361,7 +378,9 @@
 							case 'categories/save-group':    return this.CATEGORY_GROUP;
 							case 'globals/save-content':     return this.GLOBAL;
 							case 'globals/save-set':         return this.GLOBAL_SET;
-							// new for craft 3.2
+
+							// new for craft 3.2 +
+							case 'Save':
 							case 'Update Entry':
 							case 'entries/save-entry':
 							case 'entry-revisions/save-draft':
