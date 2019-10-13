@@ -1,3 +1,7 @@
 .fieldlayoutform .fld-field.fieldlabelled > span {
     text-decoration: line-through;
 }
+
+.fl-applied-label {
+    display: inline;
+}

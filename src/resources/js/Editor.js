@@ -110,6 +110,10 @@
 
 			$field.toggleClass('fieldlabelled', hasLabel);
 
+			if ($field.find('.fl-applied-label').length) {
+				$field.find('.fl-applied-label').remove();
+			}
+
 			if(hasLabel)
 			{
 				this.labels[fieldId] = {
@@ -118,6 +122,8 @@
 					hideName: hideName,
 					hideInstructions: hideInstruct,
 				};
+
+				$(`<div class="fl-applied-label">${name}</div>`).appendTo($field);
 			}
 			else
 			{
