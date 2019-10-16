@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.7 - 2019-10-17
 
 ### Changed
 - Relabeled Fields will now show the updated label with the original e.g ~~text~~ Content. #41
