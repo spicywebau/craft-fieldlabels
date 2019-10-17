@@ -41,8 +41,8 @@ When installing Field Labels on a Craft 3 project that was upgraded from Craft 2
 
 ## Screenshots
 
-![Field Labels screenshot](docs/assets/screenshot-01.png)
-![Field Labels editing screenshot](docs/assets/screenshot-02.png)
+![Field Labels screenshot](docs/assets/screenshot-01-new.png)
+![Field Labels editing screenshot](docs/assets/screenshot-02-new.png)
 
 ---
 
