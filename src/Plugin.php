@@ -144,6 +144,20 @@ class Plugin extends BasePlugin
             unset($_POST['fieldlabels']);
             unset($_POST['fieldlabels-commerce[' . $layout->id . ']']);
         });
+	
+		Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD_LAYOUT, function(Event $event) {
+			$request = Craft::$app->getRequest();
+			$layout = $event->layout;
+			// $layoutFieldIds = Craft::$app->getFields()->getFieldIdsByLayoutId($layout->id);
+			
+			$labels = $this->methods->getLabels($layout->id);
+			
+			if (count($labels) > 0) {
+				foreach ($labels as $label) {
+					$this->methods->deleteLabel($label);
+				}
+			}
+		});
     }
 
     private function _setupProjectConfig()
