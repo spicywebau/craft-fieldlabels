@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.8 - 2019-12-09
+
+### Fixed
+- Fix #45 - field labels reference will now be removed when deleting a field/layout
+
 ## 1.1.7 - 2019-10-17
 
 ### Changed
