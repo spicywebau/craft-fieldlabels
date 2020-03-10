@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.9 - 2020-03-11
 
 ### Changed
 - Update context for Craft 3.4+. #47
