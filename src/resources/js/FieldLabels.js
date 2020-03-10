@@ -362,7 +362,7 @@
 						$action = $form.find('input#apply-btn.btn.submit');
 					}
 
-					// after 3.2
+					// after 3.2 - for newly created entries.
 					if ($action === null && $form.find('#save-btn-container input.btn.submit').length) {
 						$action = $form.find('#save-btn-container input.btn.submit');
 					}
@@ -379,7 +379,9 @@
 							case 'globals/save-content':     return this.GLOBAL;
 							case 'globals/save-set':         return this.GLOBAL_SET;
 
-							// new for craft 3.2 +
+							// new for craft 3.4+ - Newly created entries.
+							case 'Create':
+							// new for craft 3.2+ - Newly created entries
 							case 'Save':
 							case 'Update Entry':
 							case 'entries/save-entry':
