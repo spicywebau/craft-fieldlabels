@@ -369,6 +369,12 @@
 
 					var action = $action !== null ? $action.val() : false;
 
+					// handle localized create buttons
+					if (Craft.translations && Craft.translations.app && action === Craft.translations.app.Create)
+					{
+						action = 'Create';
+					}
+
 					if(action)
 					{
 						switch(action)
