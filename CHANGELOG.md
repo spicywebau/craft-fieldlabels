@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.10 - 2020-03-24
+
+### Added
+- add handling for localized create buttons. thanks @swey
+
 ## 1.1.9 - 2020-03-11
 
 ### Changed
