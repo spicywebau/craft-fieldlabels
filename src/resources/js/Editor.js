@@ -123,7 +123,9 @@
 					hideInstructions: hideInstruct,
 				};
 
-				$('<div class="fl-applied-label">' + name + '</div>').appendTo($field);
+				if (name !== null) {
+					$('<div class="fl-applied-label">' + name + '</div>').appendTo($field);
+				}
 			}
 			else
 			{
