@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Fixed JavaScript errors affecting Internet Explorer
+
 ## 1.1.10 - 2020-03-24
 
 ### Added
