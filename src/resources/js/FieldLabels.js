@@ -43,6 +43,11 @@
             GIFT_VOUCHER:                 'giftVoucher',
             GIFT_VOUCHER_TYPE:            'giftVoucherType',
 
+            // Verbb Wishlist
+            WISHLIST_LIST:                'wishlistList',
+            WISHLIST_LIST_ITEM:           'wishlistListItems',
+            WISHLIST_LIST_TYPE:           'wishlistListTypes',
+
             // These objects will be populated in the Plugin.php file
             fields:  null,
             labels:  null,
@@ -208,7 +213,7 @@
 
                 if(typeof fieldLayoutId === 'object')
                 {
-                    // Commerce, could be reused for similar cases
+                    // Commerce, Wishlist, could be reused for similar cases
                     for(var type in fieldLayoutId)
                     {
                         var namespace = type !== 'default' ? type + 's-' : null;
@@ -425,6 +430,11 @@
                             // Verbb Gift Voucher actions
                             case 'gift-voucher/vouchers/save': return this.GIFT_VOUCHER;
                             case 'gift-voucher/voucher-types/save': return this.GIFT_VOUCHER_TYPE;
+
+                            // Verbb Wishlist actions
+                            case 'wishlist/lists/save-list': return this.WISHLIST_LIST;
+                            case 'wishlist/items/save-item': return this.WISHLIST_LIST_ITEM;
+                            case 'wishlist/list-types/save-list-type': return this.WISHLIST_LIST_TYPE;
                         }
                     }
                 }
@@ -483,6 +493,9 @@
                     case this.EVENTS_TICKET_TYPE: selector = 'input[name="ticketTypeId"]'; break;
                     case this.GIFT_VOUCHER: selector = 'input[name="typeId"]'; break;
                     case this.GIFT_VOUCHER_TYPE: selector = 'input[name="voucherTypeId"]'; break;
+                    case this.WISHLIST_LIST: selector = 'input[name="typeId"]'; break;
+                    case this.WISHLIST_LIST_ITEM: selector = 'input[name="listId"]'; break;
+                    case this.WISHLIST_LIST_TYPE: selector = 'input[name="listTypeId"]'; break;
                 }
 
                 var $input = $form.find(selector);
@@ -535,6 +548,9 @@
                         case this.EVENTS_TICKET_TYPE: context = this.EVENTS_TICKET_TYPE; break;
                         case this.GIFT_VOUCHER:
                         case this.GIFT_VOUCHER_TYPE: context = this.GIFT_VOUCHER_TYPE; break;
+                        case this.WISHLIST_LIST:
+                        case this.WISHLIST_LIST_TYPE: context = this.WISHLIST_LIST_TYPE; break;
+                        case this.WISHLIST_LIST_ITEM: context = this.WISHLIST_LIST_ITEM; break;
                     }
 
                     return this.layouts[context][contextId];

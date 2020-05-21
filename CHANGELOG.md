@@ -1,6 +1,13 @@
 # Changelog
 
 ## Unreleased
+
+### Added
+- Added support for Verbb Wishlist
+
+### Changed
+- Changed how Field Labels saves labels from field layout designer pages, with better handling of FLD pages with multiple field layouts (e.g. Commerce products/variants, Wishlist lists/items)
+
 ### Fixed
 - Fixed relabelled fields showing `null` as the updated name in the field layout editor if the name wasn't overridden
 

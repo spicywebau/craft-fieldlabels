@@ -35,9 +35,9 @@
 
             var fieldLayoutId = FieldLabels.getFieldLayoutId(this.$form);
 
-            if(Array.isArray(fieldLayoutId))
+            if(typeof fieldLayoutId === 'object')
             {
-                // Commerce, could be reused for similar cases
+                // Commerce, Wishlist, could be reused for similar cases
                 var fldId = this.fld.$container.prop('id');
                 var item = fldId === 'fieldlayoutform' ? 'default' : fldId.split('-layout-')[0];
 
