@@ -2,7 +2,6 @@
 
 ## Unreleased
 ### Fixed
-- Fixed JavaScript errors affecting Internet Explorer
 - Fixed relabelled fields showing `null` as the updated name in the field layout editor if the name wasn't overridden
 
 ## 1.1.10 - 2020-03-24
