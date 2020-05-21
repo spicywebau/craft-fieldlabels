@@ -36,17 +36,21 @@ class Plugin extends BasePlugin
      */
     public static $plugin;
 
-	/**
-	 * @inheritdoc
-	 */
-	public $schemaVersion = '1.1.2';
+    /**
+     * @inheritdoc
+     */
+    public $schemaVersion = '1.1.2';
+    /**
+     * @var array
+     */
+    public $controllerMap = [
+        'actions' => Controller::class,
+    ];
 
-	/**
-	 * @var array
-	 */
-	public $controllerMap = [
-		'actions' => Controller::class,
-	];
+    /**
+     * @var array
+     */
+    private $_labels;
 
     /**
      * @inheritdoc
@@ -109,55 +113,57 @@ class Plugin extends BasePlugin
 
     private function _bindEvent()
     {
-        Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD_LAYOUT, function(Event $event) {
-            $request = Craft::$app->getRequest();
+        // Keep a layout save counter -- needed for cases where Field Labels POSTs labels for more than one layout,
+        // such as Craft Commerce
+        $savedLayouts = 0;
+
+        Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD_LAYOUT, function(Event $event) use(&$savedLayouts) {
             $layout = $event->layout;
             $layoutFieldIds = Craft::$app->getFields()->getFieldIdsByLayoutId($layout->id);
-            $fieldLabels = $request->getBodyParam('fieldlabels');
 
-            if (!$fieldLabels) {
-                // Commerce
-                $commerceFieldLabels = $request->getBodyParam('fieldlabels-commerce');
+            // Get the POSTed labels if we haven't already
+            if ($this->_labels === null) {
+                $this->_labels = Craft::$app->getRequest()->getBodyParam('fieldlabels');
+            }
 
-                if ($commerceFieldLabels && isset($commerceFieldLabels[$layout->id])) {
-                    $fieldLabels = $commerceFieldLabels[$layout->id];
+            // Save the new labels for this layout and keep track of which fields have been relabelled
+            $labelledFieldIds = [];
+
+            if ($this->_labels && isset($this->_labels[$savedLayouts])) {
+                $labels = $this->_labels[$savedLayouts];
+                $labelledFieldIds = array_keys($labels);
+
+                $this->methods->saveLabels($labels, $layout->id);
+            }
+
+            // Use the relabelled field IDs to determine the unlabelled fields for this layout, then delete any unused
+            // labels (i.e. labels that the user removed in the field layout designer)
+            $unlabelledFieldIds = array_filter($layoutFieldIds, function($fieldId) use($labelledFieldIds) {
+                return !in_array($fieldId, $labelledFieldIds);
+            });
+
+            foreach ($unlabelledFieldIds as $fieldId) {
+                if (($label = $this->methods->getLabel($layout->id, $fieldId)) !== null) {
+                    $this->methods->deleteLabel($label);
                 }
             }
 
-            if ($fieldLabels) {
-                $this->methods->saveLabels($fieldLabels, $layout->id);
-
-                $labelledFieldIds = array_keys($fieldLabels);
-                $unlabelledFieldIds = array_filter($layoutFieldIds, function($fieldId) use($labelledFieldIds)
-                {
-                    return !in_array($fieldId, $labelledFieldIds);
-                });
-
-                foreach ($unlabelledFieldIds as $fieldId) {
-                    if (($label = $this->methods->getLabel($layout->id, $fieldId)) !== null) {
-                        $this->methods->deleteLabel($label);
-                    }
-                }
-            }
-
-            // Make sure these labels don't get saved more than once
-            unset($_POST['fieldlabels']);
-            unset($_POST['fieldlabels-commerce[' . $layout->id . ']']);
+            $savedLayouts++;
         });
-	
-		Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD_LAYOUT, function(Event $event) {
-			$request = Craft::$app->getRequest();
-			$layout = $event->layout;
-			// $layoutFieldIds = Craft::$app->getFields()->getFieldIdsByLayoutId($layout->id);
-			
-			$labels = $this->methods->getLabels($layout->id);
-			
-			if (count($labels) > 0) {
-				foreach ($labels as $label) {
-					$this->methods->deleteLabel($label);
-				}
-			}
-		});
+
+        Event::on(Fields::class, Fields::EVENT_AFTER_DELETE_FIELD_LAYOUT, function(Event $event) {
+            $request = Craft::$app->getRequest();
+            $layout = $event->layout;
+            // $layoutFieldIds = Craft::$app->getFields()->getFieldIdsByLayoutId($layout->id);
+
+            $labels = $this->methods->getLabels($layout->id);
+
+            if (count($labels) > 0) {
+                foreach ($labels as $label) {
+                    $this->methods->deleteLabel($label);
+                }
+            }
+        });
     }
 
     private function _setupProjectConfig()
@@ -381,7 +387,7 @@ class Plugin extends BasePlugin
 
         foreach ($list as $item) {
             $output[(int)$item->id] = [
-                'productType' => (int)$item->fieldLayoutId,
+                'default' => (int)$item->fieldLayoutId,
                 'variant' => (int)$item->variantFieldLayoutId,
             ];
         }

@@ -206,11 +206,16 @@
                     }
                 }
 
-                if(Array.isArray(fieldLayoutId))
+                if(typeof fieldLayoutId === 'object')
                 {
-                    // This is a Commerce product type, we need to apply the variant labels too
-                    this.applyLabels(element, fieldLayoutId[1], 'variants-');
-                    fieldLayoutId = fieldLayoutId[0];
+                    // Commerce, could be reused for similar cases
+                    for(var type in fieldLayoutId)
+                    {
+                        var namespace = type !== 'default' ? type + 's-' : null;
+                        this.applyLabels(element, fieldLayoutId[type], namespace);
+                    }
+
+                    return;
                 }
 
                 var labels = this.getLabelsOnFieldLayout(fieldLayoutId);
@@ -522,14 +527,7 @@
                         case this.TAG:
                         case this.TAG_GROUP:      context = this.TAG_GROUP; break;
                         case this.COMMERCE_PRODUCT:
-                        case this.COMMERCE_PRODUCT_TYPE:
-                        {
-                            context = this.COMMERCE_PRODUCT_TYPE;
-                            return [
-                                this.layouts[context][contextId]['productType'] | 0,
-                                this.layouts[context][contextId]['variant'] | 0,
-                            ];
-                        }
+                        case this.COMMERCE_PRODUCT_TYPE: context = this.COMMERCE_PRODUCT_TYPE; break;
                         case this.CALENDAR:
                         case this.CALENDAR_EVENT: context = this.CALENDAR; break;
                         case this.EVENTS_EVENT:
@@ -539,7 +537,7 @@
                         case this.GIFT_VOUCHER_TYPE: context = this.GIFT_VOUCHER_TYPE; break;
                     }
 
-                    return this.layouts[context][contextId] | 0;
+                    return this.layouts[context][contextId];
                 } else {
                     switch(context)
                     {
