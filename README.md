@@ -13,6 +13,7 @@ Field Labels supports overriding the names and instructions on any custom fields
 - Craft Commerce product types, variants, orders and subscriptions
 - [Neo](https://github.com/spicywebau/craft-neo) fields
 - [Solspace Calendar](https://github.com/solspace/craft3-calendar) events
+- [Verbb Wishlist](https://github.com/verbb/wishlist) list types and items
 - [Verbb Events](https://github.com/verbb/events)
 - [Verbb Gift Voucher](https://github.com/verbb/gift-voucher)
 
