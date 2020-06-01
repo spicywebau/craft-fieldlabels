@@ -381,13 +381,19 @@
                     if ($action === null && $form.find('#publish-btn-container input.btn.submit').length) {
                         $action = $form.find('#publish-btn-container input.btn.submit');
                     }
-                    
+
                     var action = $action !== null ? $action.val() : false;
 
                     // handle localized create buttons
                     if (Craft.translations && Craft.translations.app && action === Craft.translations.app.Create)
                     {
                         action = 'Create';
+                    }
+
+                    // handle localized create buttons
+                    if (Craft.translations && Craft.translations.app && action === Craft.translations.app['Publish changes'])
+                    {
+                        action = 'Publish changes';
                     }
 
                     if(action)
@@ -405,6 +411,8 @@
                             // new for craft 3.2+ - Newly created entries
                             case 'Save':
                             case 'Update Entry':
+                            // new for craft 3.5+ - Drafts
+                            case 'Publish changes':
                             case 'entries/save-entry':
                             case 'entry-revisions/save-draft':
                             {
@@ -630,7 +638,7 @@
                 var lines = instructions.split(/\r?\n/);
                 var html = '';
                 var newParagraph = true;
-    
+
                 for(var i in lines)
                 {
                     var line = lines[i];
