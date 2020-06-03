@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1 - 2020-06-03
+
+### Fixed
+- Fixed issue with the Craft 3.5 beta, where labels were not displaying on drafts (thanks @leevigraham)
+
 ## 1.2.0 - 2020-05-24
 
 ### Added
