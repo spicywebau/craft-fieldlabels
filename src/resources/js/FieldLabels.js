@@ -378,8 +378,8 @@
                     }
 
                     // after 3.5 - for drafts
-                    if ($action === null && $form.find('#publish-btn-container input.btn.submit').length) {
-                        $action = $form.find('#publish-btn-container input.btn.submit');
+                    if ($action === null && $form.find('#publish-changes-btn-container input.btn.submit').length) {
+                        $action = $form.find('#publish-changes-btn-container input.btn.submit');
                     }
 
                     var action = $action !== null ? $action.val() : false;
