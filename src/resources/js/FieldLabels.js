@@ -345,6 +345,15 @@
 
                 var elementEditor = $form.data('elementEditor');
 
+                if(window.draftEditor) {
+                    switch(window.draftEditor.settings.elementType)
+                    {
+                        // TODO All other cases
+                        case 'craft\\elements\\Entry':
+                            return this.ENTRY;
+                    }
+                }
+                
                 if(elementEditor)
                 {
                     switch(elementEditor.settings.elementType)
