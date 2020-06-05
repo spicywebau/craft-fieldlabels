@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 - 2020-06-06
+
+### Fixed
+- Fixed issue where labels were not displaying on entry drafts if the user did not have permission to publish the draft (thanks @leevigraham)
+
 ## 1.2.1 - 2020-06-03
 
 ### Fixed
