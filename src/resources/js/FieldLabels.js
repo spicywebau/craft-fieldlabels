@@ -350,7 +350,7 @@
                     {
                         // TODO All other cases
                         case 'craft\\elements\\Entry':
-                            return this.ENTRY;
+                            return this._getEntryContext($form, namespace);
                     }
                 }
                 
@@ -360,10 +360,7 @@
                     {
                         // TODO All other cases
                         case 'Entry':
-                        {
-                            $entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
-                            return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
-                        }
+                            return this._getEntryContext($form, namespace);
                     }
                 }
                 else
@@ -424,10 +421,7 @@
                             case 'Publish changes':
                             case 'entries/save-entry':
                             case 'entry-revisions/save-draft':
-                            {
-                                $entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
-                                return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
-                            }
+                                return this._getEntryContext($form, namespace);
                             case 'sections/save-entry-type': return this.ENTRY_TYPE;
                             case 'tags/save-tag-group':      return this.TAG_GROUP;
                             case 'users/save-user':          return this.USER;
@@ -676,6 +670,12 @@
                 }
 
                 return html;
+            },
+
+            _getEntryContext: function($form, namespace)
+            {
+                $entryType = $form.find('input[name="entryTypeId"], input[name="typeId"], #' + namespace + 'entryType');
+                return $entryType.length ? this.ENTRY : this.SINGLE_SECTION;
             }
         }))();
     }
