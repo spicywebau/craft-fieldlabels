@@ -59,6 +59,12 @@ class Plugin extends BasePlugin
     {
         parent::init();
 
+        // Craft 3.5 has native field relabelling, Field Labels is no longer necessary
+        // TODO: add migration and deprecation notice
+        if (class_exists('craft\base\FieldLayoutElement')) {
+            return;
+        }
+
         self::$plugin = $this;
 
         $this->setComponents([
