@@ -125,6 +125,12 @@ class Plugin extends BasePlugin
 
         Event::on(Fields::class, Fields::EVENT_AFTER_SAVE_FIELD_LAYOUT, function(Event $event) use(&$savedLayouts) {
             $layout = $event->layout;
+
+            // Don't try to save labels for Neo field layouts, Neo handles that itself
+            if ($layout->type === 'benf\\neo\\elements\\Block') {
+                return;
+            }
+
             $layoutFieldIds = Craft::$app->getFields()->getFieldIdsByLayoutId($layout->id);
 
             // Get the POSTed labels if we haven't already

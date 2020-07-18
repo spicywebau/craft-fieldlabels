@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Fixed
+- Fixed an issue when saving a Neo block type, where Field Labels would delete existing labels before Neo would recreate them, instead of just having Neo update the existing labels
 - Fixed a JavaScript error that could occur when trying to override labels on field inputs
 
 ## 1.2.2 - 2020-06-06
