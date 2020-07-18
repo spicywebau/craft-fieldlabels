@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a JavaScript error that could occur when trying to override labels on field inputs
+
 ## 1.2.2 - 2020-06-06
 
 ### Fixed

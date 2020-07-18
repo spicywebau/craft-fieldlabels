@@ -239,6 +239,11 @@
                     var field = this.getFieldInfo(label.fieldId);
                     var $field;
 
+                    if(typeof field === 'undefined')
+                    {
+                        continue;
+                    }
+
                     // Get Commerce variant fields, since their field IDs include the variant IDs
                     if(namespace !== 'variants-' && namespace !== 'tickets-')
                     {
