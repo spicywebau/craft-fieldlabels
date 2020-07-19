@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+> {warning} With this release, Field Labels is prevented from applying its functionality to the Craft 3.5 beta.  Field Labels will not be compatible with Craft 3.5, due to Craft 3.5's new field layout designer including the ability to override field labels and instructions.  A future Craft 3.5-exclusive Field Labels update will migrate Field Labels data to the new format.
+
 ### Fixed
 - Fixed an issue when saving a Neo block type, where Field Labels would delete existing labels before Neo would recreate them, instead of just having Neo update the existing labels
 - Fixed a JavaScript error that could occur when trying to override labels on field inputs
