@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.3 - 2020-07-19
 
 > {warning} With this release, Field Labels is prevented from applying its functionality to the Craft 3.5 beta.  Field Labels will not be compatible with Craft 3.5, due to Craft 3.5's new field layout designer including the ability to override field labels and instructions.  A future Craft 3.5-exclusive Field Labels update will migrate Field Labels data to the new format.
 

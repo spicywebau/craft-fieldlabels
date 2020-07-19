@@ -1,7 +1,7 @@
 {
   "name": "spicyweb/craft-fieldlabels",
   "description": "Override Craft CMS field labels and instructions in the field layout designer",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "type": "craft-plugin",
   "keywords": [
     "craftcms",
