@@ -7,6 +7,8 @@
 
     var Widgets = new (Garnish.Base.extend({
 
+        _quickPostInitialised: false,
+
         setup: function()
         {
             // Bail if we're not on the dashboard
@@ -18,8 +20,6 @@
             var Widget = Craft.Widget;
             var Widget_init = Craft.Widget.prototype.init;
             var Widget_update = Craft.Widget.prototype.update;
-            var QuickPostWidget = Craft.QuickPostWidget;
-            var QuickPostWidget_save = Craft.QuickPostWidget.prototype.save;
 
             Widget.prototype.init = function()
             {
@@ -46,31 +46,11 @@
                     var fieldLayoutId = FieldLabels.Widgets.getFieldLayoutId(this.$settingsForm);
                     FieldLabels.Widgets.applyLabels(this.$container, fieldLayoutId);
                 }
-            }
 
-            QuickPostWidget.prototype.save = function()
-            {
-                QuickPostWidget_save.apply(this, arguments);
-
-                var widget = this;
-
-                $(document).on('ajaxComplete.fieldlabels', function(event, xhr, settings)
+                if(!(typeof Craft.QuickPostWidget === 'undefined' || FieldLabels.Widgets.isQuickPostInitialised()))
                 {
-                    $(event.currentTarget).off('ajaxComplete.fieldlabels');
-                    var errors = xhr.responseJSON['errors'];
-
-                    if(typeof errors !== 'undefined' && settings.url.split('/').pop() === 'save-entry')
-                    {
-                        var fieldLayoutId = FieldLabels.layouts[FieldLabels.ENTRY_TYPE][widget.params.typeId];
-                        FieldLabels.Widgets.applyErrorLabels(widget.$errorList, errors, fieldLayoutId);
-
-                        // Give other plugins (e.g. Neo) a way to apply their label names to this widget's errors
-                        $(document).trigger('labelWidgetErrors', {
-                            element: widget.$errorList,
-                            errors: errors,
-                        });
-                    }
-                });
+                    FieldLabels.Widgets.initQuickPostWidgets();
+                }
             }
         },
 
@@ -177,6 +157,49 @@
             }
 
             return false;
+        },
+
+        isQuickPostInitialised: function()
+        {
+            return this._quickPostInitialised;
+        },
+
+        initQuickPostWidgets: function()
+        {
+            if(typeof Craft.QuickPostWidget === 'undefined' || this._quickPostInitialised)
+            {
+                return;
+            }
+
+            var QuickPostWidget = Craft.QuickPostWidget;
+            var QuickPostWidget_save = Craft.QuickPostWidget.prototype.save;
+
+            QuickPostWidget.prototype.save = function()
+            {
+                QuickPostWidget_save.apply(this, arguments);
+
+                var widget = this;
+
+                $(document).on('ajaxComplete.fieldlabels', function(event, xhr, settings)
+                {
+                    $(event.currentTarget).off('ajaxComplete.fieldlabels');
+                    var errors = xhr.responseJSON['errors'];
+
+                    if(typeof errors !== 'undefined' && settings.url.split('/').pop() === 'save-entry')
+                    {
+                        var fieldLayoutId = FieldLabels.layouts[FieldLabels.ENTRY_TYPE][widget.params.typeId];
+                        FieldLabels.Widgets.applyErrorLabels(widget.$errorList, errors, fieldLayoutId);
+
+                        // Give other plugins (e.g. Neo) a way to apply their label names to this widget's errors
+                        $(document).trigger('labelWidgetErrors', {
+                            element: widget.$errorList,
+                            errors: errors,
+                        });
+                    }
+                });
+            }
+
+            this._quickPostInitialised = true;
         }
     }))();
 
