@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.4 - 2020-07-23
 
 ### Fixed
 - Fixed a bug where labels would not apply to new quick post widgets, if no quick post widgets already existed on the dashboard
