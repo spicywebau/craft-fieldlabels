@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed a bug where labels would not apply to new quick post widgets, if no quick post widgets already existed on the dashboard
+- Fixed a bug with quick post widgets where translatable field icons would be lost when applying labels
 
 ## 1.2.3 - 2020-07-19
 

@@ -75,7 +75,17 @@
 
                 if(label.name)
                 {
-                    $label.text(Craft.t('fieldlabels', label.name));
+                    var $translatable = $label.children('[data-icon="language"]');
+                    var isTranslatable = $translatable.length > 0;
+                    var originalName = $label.text().trim();
+                    var translatedName = Craft.t('fieldlabels', label.name);
+
+                    $label.text(translatedName + (isTranslatable ? ' ' : ''));
+
+                    if(isTranslatable)
+                    {
+                        $label.append($translatable);
+                    }
                 }
 
                 if(label.instructions)
