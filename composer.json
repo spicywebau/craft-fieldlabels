@@ -30,7 +30,7 @@
   "extra": {
     "handle": "fieldlabels",
     "name": "Field Labels",
-    "schemaVersion": "1.1.2",
+    "schemaVersion": "1.3.0",
     "class": "spicyweb\\fieldlabels\\Plugin",
     "changelogUrl": "https://github.com/spicywebau/craft-fieldlabels/blob/master/CHANGELOG.md",
     "downloadUrl": "https://github.com/spicywebau/craft-fieldlabels/archive/master.zip"
