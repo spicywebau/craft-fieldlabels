@@ -67,8 +67,8 @@ class Plugin extends BasePlugin
         ]);
 
         // Craft 3.5 has native field relabelling, Field Labels is no longer necessary
-        // TODO: add migration and deprecation notice
         if (class_exists('craft\base\FieldLayoutElement')) {
+            $this->_logDeprecationError();
             return;
         }
 
@@ -440,5 +440,13 @@ class Plugin extends BasePlugin
         }
 
         return $output;
+    }
+
+    private function _logDeprecationError()
+    {
+        Craft::$app->getDeprecator()->log(
+            'Plugin::init()',
+            'Craft CMS 3.5 has in-built field relabelling with the new field layout designer. Please check to confirm your relabelled data has successfully been migrated to the Craft CMS 3.5 format, then uninstall Field Labels.'
+        );
     }
 }
