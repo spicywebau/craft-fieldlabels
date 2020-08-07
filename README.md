@@ -2,6 +2,10 @@
 
 # Field Labels
 
+**Note: As of August 7, 2020, Field Labels is no longer supported, due to its field label/instruction overriding ability being added to Craft 3.5.  If you are a user of Field Labels upgrading to Craft 3.5, please check to confirm that Field Labels 1.3 has successfully migrated your field label/instruction overrides to the Craft 3.5 format, then uninstall Field Labels.**
+
+**Users of Craft 3.1-3.4 may continue to use [Field Labels 1.2.4](https://github.com/spicywebau/craft-fieldlabels/tree/1.2), users of Craft 2 may continue to use [Relabel 0.1.3](https://github.com/spicywebau/craft-fieldlabels/tree/craft-2), and the license allows you to fork this project and make any changes that you require.**
+
 A Craft CMS plugin that allows overriding field labels and instructions for individual entry and element types in the field layout designer.
 This is useful for when you want to tailor the name or instructions of a field to a particular area, without having to
 create another (essentially identical) field.
@@ -18,10 +22,6 @@ Field Labels supports overriding the names and instructions on any custom fields
 - [Verbb Gift Voucher](https://github.com/verbb/gift-voucher)
 
 *Note: This is the plugin originally released for Craft 2 as Relabel.*
-
-## Requirements
-
-Field Labels requires Craft CMS 3.1.24 or later.  For Relabel for Craft 2, see the [`craft-2`](https://github.com/spicywebau/craft-fieldlabels/tree/craft-2) branch.
 
 ## Installation
 
