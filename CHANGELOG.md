@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+> {warning} This release migrates field label/instruction overrides from the Field Labels format to the Craft 3.5 format.  After updating, please check to confirm your relabelled data has successfully been migrated to the Craft 3.5 format, then uninstall Field Labels.  While all control panel functionality of Field Labels has been permanently disabled, Field Labels data and all other functionality will remain available while the plugin is still installed, in case it's still required for any other plugin or module.
+
+### Added
+- Added a migration of field label/instruction overrides from the Field Labels format to the Craft CMS 3.5 format
+
+### Changed
+- All front-end relabelling functionality has been disabled, to prevent Field Labels from attempting to relabel fields that had more recently been relabelled within Craft 3.5
+
 ## 1.2.4 - 2020-07-23
 
 ### Fixed
