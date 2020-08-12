@@ -68,7 +68,7 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
                         $layoutUpdated = true;
                     }
 
-                    $tabElement->label = $label->name;
+                    $tabElement->label = $label->hideName ? '__blank__' : $label->name;
                     $tabElement->instructions = $label->instructions;
                 }
             }
