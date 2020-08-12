@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+> {warning} This update will execute a project config rebuild, to ensure all field layout changes are saved to the project config, due to issues with the 1.3.0 migration saving field label data to the database but not the project config.  Please ensure you have backed up your Craft install's `config/project` directory before proceeding with this update.
+
 ### Fixed
 - Added a migration to set field label overrides to `__blank__` if `Hide Name` was set
 - The migration also executes a project config rebuild to make sure the updated field layouts are saved to the project config
