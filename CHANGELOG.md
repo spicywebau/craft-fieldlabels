@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.1 - 2020-08-12
 
 > {warning} This update will execute a project config rebuild, to ensure all field layout changes are saved to the project config, due to issues with the 1.3.0 migration saving field label data to the database but not the project config.  Please ensure you have backed up your Craft install's `config/project` directory before proceeding with this update.
 
