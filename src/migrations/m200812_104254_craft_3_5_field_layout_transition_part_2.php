@@ -9,13 +9,13 @@ use craft\helpers\Db;
 use spicyweb\fieldlabels\Plugin as FieldLabels;
 
 /**
- * Transitions Field Labels data to the in-built Craft 3.5 field relabelling format.
+ * m200812_104254_craft_3_5_field_layout_transition_part_2 migration.
  *
  * @package spicyweb\fieldlabels\migrations
  * @author Spicy Web <plugins@spicyweb.com.au>
- * @since 1.3.0
+ * @since 1.3.1
  */
-class m200726_085655_craft_3_5_field_layout_transition extends Migration
+class m200812_104254_craft_3_5_field_layout_transition_part_2 extends Migration
 {
     /**
      * @inheritdoc
@@ -27,6 +27,7 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
         $labels = [];
         $layouts = [];
         $fields = [];
+        $anyLayoutUpdated = false;
 
         // Re-index the labels by layout/field UIDs, so we can easily look them up when updating the layouts
         foreach ($oldLabels as $label) {
@@ -58,8 +59,8 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
 
                     $label = $labels[$layout->uid][$tabElement->fieldUid] ?? null;
 
-                    // No label for this layout/field, nothing to do here
-                    if ($label === null) {
+                    // No label or hideName for this layout/field, nothing to do here
+                    if ($label === null || !$label->hideName) {
                         continue;
                     }
 
@@ -67,15 +68,22 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
                         $layoutUpdated = true;
                     }
 
-                    $tabElement->label = $label->name;
-                    $tabElement->instructions = $label->instructions;
+                    $tabElement->label = $label->hideName ? '__blank__' : $label->name;
                 }
             }
 
             // No need to resave the layout if we never updated any elements
             if ($layoutUpdated) {
                 $fieldsService->saveLayout($layout);
+
+                if (!$anyLayoutUpdated) {
+                    $anyLayoutUpdated = true;
+                }
             }
+        }
+
+        if ($anyLayoutUpdated) {
+            Craft::$app->getProjectConfig()->rebuild();
         }
     }
 
@@ -84,7 +92,7 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
      */
     public function safeDown()
     {
-        echo "m200726_085655_craft_3_5_field_layout_transition cannot be reverted.\n";
+        echo "m200812_104254_craft_3_5_field_layout_transition_part_2 cannot be reverted.\n";
         return false;
     }
 }

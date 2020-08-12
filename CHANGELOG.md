@@ -3,8 +3,8 @@
 ## Unreleased
 
 ### Fixed
-- Updated the migration to set field label overrides to '__blank__' if hideName was set
-- Updated the migration to make sure the updated field layouts are saved to the project config
+- Added a migration to set field label overrides to `__blank__` if `Hide Name` was set
+- The migration also executes a project config rebuild to make sure the updated field layouts are saved to the project config
 
 ## 1.3.0 - 2020-08-07
 
