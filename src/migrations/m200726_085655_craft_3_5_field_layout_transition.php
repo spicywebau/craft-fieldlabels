@@ -27,6 +27,7 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
         $labels = [];
         $layouts = [];
         $fields = [];
+        $anyLayoutUpdated = false;
 
         // Re-index the labels by layout/field UIDs, so we can easily look them up when updating the layouts
         foreach ($oldLabels as $label) {
@@ -75,7 +76,15 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
             // No need to resave the layout if we never updated any elements
             if ($layoutUpdated) {
                 $fieldsService->saveLayout($layout);
+
+                if (!$anyLayoutUpdated) {
+                    $anyLayoutUpdated = true;
+                }
             }
+        }
+
+        if ($anyLayoutUpdated) {
+            Craft::$app->getProjectConfig()->rebuild();
         }
     }
 

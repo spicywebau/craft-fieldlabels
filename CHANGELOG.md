@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Updated the migration to make sure the updated field layouts are saved to the project config
+
 ## 1.3.0 - 2020-08-07
 
 > {warning} This release migrates field label/instruction overrides from the Field Labels format to the Craft 3.5 format.  After updating, please check to confirm your relabelled data has successfully been migrated to the Craft 3.5 format, then uninstall Field Labels.  While all control panel functionality of Field Labels has been permanently disabled, Field Labels data and all other functionality will remain available while the plugin is still installed, in case it's still required for any other plugin or module.
