@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+> {warning} This update rewrites the previous 1.3 migrations to avoid a project config rebuild, and instead attempts to update the project config directly where possible.  If some labels couldn't be written to the project config for some reason (e.g. if some field layouts in the project config haven't yet been updated to the new format), those labels will be updated in the database, and a warning will be logged advising that a project config rebuild will need to be run manually.
+
+### Fixed
+- Rewrote the 1.3.0/1.3.1 migrations to update the project config where possible, without a rebuild that could cause conflicts in some cases
+
 ## 1.3.1 - 2020-08-12
 
 > {warning} This update will execute a project config rebuild, to ensure all field layout changes are saved to the project config, due to issues with the 1.3.0 migration saving field label data to the database but not the project config.  Please ensure you have backed up your Craft install's `config/project` directory before proceeding with this update.
