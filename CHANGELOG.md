@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.1.2 - 2020-10-28
 
 ### Fixed
 - Fixed an error that could occur during the Craft 3.5 migration, if there were any field labels that belonged to deleted field layouts (thanks @iainsaxon)
