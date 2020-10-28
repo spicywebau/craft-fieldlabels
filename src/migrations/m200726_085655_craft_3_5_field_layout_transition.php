@@ -33,7 +33,14 @@ class m200726_085655_craft_3_5_field_layout_transition extends Migration
         // Re-index the labels by layout/field UIDs, so we can easily look them up when updating the layouts
         foreach ($oldLabels as $label) {
             if (!isset($layouts[$label->fieldLayoutId])) {
-                $layouts[$label->fieldLayoutId] = $fieldsService->getLayoutById($label->fieldLayoutId);
+                $layout = $fieldsService->getLayoutById($label->fieldLayoutId);
+
+                // skip over labels belonging to deleted layouts
+                if (null === $layout) {
+                    continue;
+                }
+
+                $layouts[$label->fieldLayoutId] = $layout;
             }
 
             $layoutUid = $layouts[$label->fieldLayoutId]->uid;
