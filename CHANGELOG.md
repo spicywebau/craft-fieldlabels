@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed an error that could occur during the Craft 3.5 migration, if there were any field labels that belonged to deleted field layouts (thanks @iainsaxon)
+
 ## 1.3.1.1 - 2020-09-08
 
 > {warning} This update rewrites the previous 1.3 migrations to avoid a project config rebuild, and instead attempts to update the project config directly where possible.  If some labels couldn't be written to the project config for some reason (e.g. if some field layouts in the project config haven't yet been updated to the new format), those labels will be updated in the database, and a warning will be logged advising that a project config rebuild will need to be run manually.
