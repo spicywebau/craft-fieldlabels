@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.2 - 2021-08-17
 
 ### Changed
 - Updated Field Labels' Craft version requirements to allow installation on Craft 3.6, 3.7 and future Craft 3 releases
